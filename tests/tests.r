@@ -1,9 +1,13 @@
 
 library(devtools)
 
-devtools::load_all()
+install_github("babeheim/ledgr")
 
+devtools::load_all()
 ledgr::create_books('./test-books')
+
+
+
 
 setwd('./test-books')
 
