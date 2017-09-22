@@ -19,6 +19,9 @@ prepare_reports <- function(account_depth=2, currency="eur"){
   d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
 
   dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
+  
+  dateshift$original_date <- fix_dates(dateshift$original_date)
+  dateshift$presentation_date <- fix_dates(dateshift$presentation_date)
   shift_tar <- which(d$tid %in% dateshift$tid)
   if(length(shift_tar)>0){
     d$date[shift_tar] <- dateshift$presentation_date[match(d$tid[shift_tar], dateshift$tid)]
@@ -30,6 +33,9 @@ prepare_reports <- function(account_depth=2, currency="eur"){
   # convert currencies
   xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
   d <- exchange(d, xe, 'eur')
+
+  drop <- which(is.na(d$date))
+  if(length(drop)>0) d <- d[-drop,]
 
   dir_init("./reports", overwrite=FALSE)
 
@@ -208,14 +214,13 @@ texttab <- function(input.matrix, alignment=NA, hlines=NA, caption="", scale=NA)
   return(output)
 }
 
-
 fix_dates <- function(dates){
   if(length(grep('/', dates))>0){
     last_four <- substr(dates, nchar(dates)-3, nchar(dates))
     lower_y <- grep('/', last_four)
-    upper_y <- which(!1:nrow(d) %in% lower_y)
-    dates[upper_y] <- as.character(as.Date(dates, '%m/%d/%Y'))
-    dates[lower_y] <- as.character(as.Date(dates, '%m/%d/%y'))
+    upper_y <- which(!1:length(dates) %in% lower_y)
+    if(length(upper_y)>0) dates[upper_y] <- as.character(as.Date(dates[upper_y], '%m/%d/%Y'))
+    if(length(lower_y)>0) dates[lower_y] <- as.character(as.Date(dates[lower_y], '%m/%d/%y'))
   }
   dates <- as.Date(dates)
   return(dates)
@@ -257,7 +262,7 @@ exchange <- function(journal, prices, out_currency){
   journal$date <- fix_dates(journal$date)
   prices$date <- fix_dates(prices$date)
   for(i in 1:nrow(journal)){
-    if(journal$currency[i]!=out_currency){
+    if(journal$currency[i]!=out_currency & !is.na(journal$date[i])){
       ex_rows <- which(prices$numerator==journal$currency[i] & prices$denominator==out_currency)
       if(length(ex_rows)>0){
         ex_dates <- prices$date[ex_rows]
@@ -306,6 +311,8 @@ prepare_journal <- function(){
 
 }
 
+
+# amount must be a numeirc, if its not, soemthig is wrong!
 
 balance_accounts <- function(){
 
@@ -373,6 +380,8 @@ summarize_accounts <- function(){
 
   account_list <- sort(unique(c(d$account, d$tag))) # alphabetical order
 
+  d$amount <- as.numeric(d$amount)
+
   n_postings <- rep(NA, length(account_list))
   start_date <- rep(NA, length(account_list))
   last_date <- rep(NA, length(account_list))
@@ -381,12 +390,12 @@ summarize_accounts <- function(){
 
   for(i in 1:length(account_list)){
 
-  involved <- which(d$account == account_list[i] | d$tag==account_list[i])
-  n_postings[i] <- length(involved)
-  start_date[i] <- min(d$date[involved])
-  last_date[i] <- min(d$date[involved])
-  net_flow[i] <- sum(d$amount[involved])
-  n_checksums[i] <- sum(!is.na(d$checksum[d$account==account_list[i]]))
+    involved <- which(d$account == account_list[i] | d$tag==account_list[i])
+    n_postings[i] <- length(involved)
+    start_date[i] <- min(d$date[involved])
+    last_date[i] <- min(d$date[involved])
+    net_flow[i] <- round(sum(d$amount[involved]), 2)
+    n_checksums[i] <- sum(!is.na(d$checksum[d$account==account_list[i]]))
 
   }
 

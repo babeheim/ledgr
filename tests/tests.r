@@ -1,12 +1,10 @@
 
 library(devtools)
 
-install_github("babeheim/ledgr")
-
 devtools::load_all()
 
-
-ledgr::create_books('./test-books')
+# install_github("babeheim/ledgr")
+# ledgr::create_books('./test-books')
 
 
 
@@ -146,6 +144,7 @@ ledgr::balance_accounts()
 ledgr::seperate_accounts()
 
 ledgr::merge_accounts()
+# eliminates all NA's..not good!
 
 # ledgr::audit_accounts() 
 # looks through the accounts for trouble:
@@ -154,6 +153,8 @@ ledgr::merge_accounts()
 # - unbalanced transactions
 # - accounts that aren't in the accounts.csv file (or are NA)
 # - currency cannot be NA
+# - date cannot be NA
+# - tag and account cannot be NA
 
 
 # every function has to have a path...or it works with the files in memory perhaps?
@@ -173,6 +174,21 @@ ledgr::seperate_accounts()
 
 ledgr::prepare_journal()
 
+d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+
+d <- exchange(d, xe, "eur") 
+# needs more testing....
+
+
+# need to unit test this!
+
+ds <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
+
+fix_dates(ds$original_date)
+
+
+
 ledgr::absorb_entries()
 
 ledgr::summarize_accounts()
@@ -181,6 +197,8 @@ ledgr::balance_accounts()
 
 ledgr::prepare_journal() 
 # journal should drop bad tids
+
+
 
 ledgr::prepare_reports()
 
