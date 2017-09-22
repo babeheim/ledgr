@@ -18,6 +18,12 @@ prepare_reports <- function(account_depth=2){
   a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
   d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
 
+  dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
+  shift_tar <- which(d$tid %in% dateshift$tid)
+  if(length(shift_tar)>0){
+    d$date[shift_tar] <- dateshift$presentation_date[match(d$tid[shift_tar], dateshift$tid)]
+  }
+
   d$account <- truncate_accounts(d$account, level=account_depth)
   a$account <- truncate_accounts(a$account, level=account_depth)
 

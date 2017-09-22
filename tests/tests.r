@@ -81,6 +81,22 @@ my_filename <- paste0(my_filename, ".csv")
 write.csv(d, file.path('./primary_sources', my_filename), row.names=FALSE)
 
 
+# generate some multi=currency transactions with a fixed ratio
+# that goes into the time no problemo
+
+
+# add some dateshifting
+
+d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+
+shift_tid <- sample(d$tid, 10)
+original_date <- d$date[match(shift_tid, d$tid)]
+presentation_date <- as.Date(as.numeric(as.Date("2001-01-01")) + round(rnorm(length(original_date), 0, 1000)), origin="1970-01-01")
+
+date_shifts <- data.frame(tid=shift_tid, original_date, presentation_date)
+write.csv(date_shifts, "./csv/date_shifts.csv", row.names=FALSE)
+
+
 
 ledgr::absorb_entries()
 # im really gonna need a timestamp...hmmm...
@@ -113,12 +129,9 @@ d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
 
 xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
-dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
-
 d <- exchange(d, xe, 'eur')
 
-tar <- which(d$tid %in% dateshift$tid)
-if(length(tar)>0) d$date[tar] <- dateshift$presentation_date[match(d$tid[tar], dateshift$tid)]
+
 
 # drop <- which(d$date < '2015-06-01')
 # d <- d[-drop,] # the beginning of time?
