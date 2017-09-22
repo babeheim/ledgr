@@ -10,7 +10,7 @@ truncate_accounts <- function(string, level=NA){
     return(output)
 }
 
-prepare_reports <- function(account_depth=2){
+prepare_reports <- function(account_depth=2, currency="eur"){
   
   if(!file.exists('./csv/accounts.csv')) stop("accounts.csv has not been created; run summarize_accounts first")
   if(!file.exists('./csv/journal.csv')) stop("journal.csv has not been created; run prepare_journal first")
@@ -26,6 +26,10 @@ prepare_reports <- function(account_depth=2){
 
   d$account <- truncate_accounts(d$account, level=account_depth)
   a$account <- truncate_accounts(a$account, level=account_depth)
+
+  # convert currencies
+  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  d <- exchange(d, xe, 'eur')
 
   dir_init("./reports", overwrite=FALSE)
 
@@ -217,19 +221,56 @@ fix_dates <- function(dates){
   return(dates)
 }
 
-exchange <- function(journal, prices, currency){
+format_exchange_rates <- function(){
+
+ # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
+
+  ex <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+
+  if(nrow(ex) > 0){
+
+    ex$date <- fix_dates(ex$date)
+
+    ex2 <- ex
+    ex2$denominator <- ex$numerator
+    ex2$numerator <- ex$denominator
+    ex2$price <- 1/ex$price
+
+    ex <- rbind(ex, ex2)
+
+    o <- order(ex$date)
+    ex <- ex[o,]
+
+    drop <- which(duplicated(ex))
+    ex <- ex[-drop,]
+
+    write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
+
+  }
+
+}
+
+# unit test: try to exchange currencies that have no pairings
+# unit test: try to exchange currencies when last observed price is REALLY FAR AWAY
+
+exchange <- function(journal, prices, out_currency){
   journal$date <- fix_dates(journal$date)
   prices$date <- fix_dates(prices$date)
   for(i in 1:nrow(journal)){
-    if(journal$currency[i]!=currency & journal$currency[i] %in% prices$numerator){
-      currency_rows <- which(prices$numerator==journal$currency[i])
-      currency_dates <- prices$date[currency_rows]
-      diffs <- abs(journal$date[i] - currency_dates)
-      best_row <- currency_rows[which.min(diffs)]
-      journal$amount[i] <- prices$price[best_row]*journal$amount[i]
-      journal$currency[i] <- paste0(currency,'-eqv')
+    if(journal$currency[i]!=out_currency){
+      ex_rows <- which(prices$numerator==journal$currency[i] & prices$denominator==out_currency)
+      if(length(ex_rows)>0){
+        ex_dates <- prices$date[ex_rows]
+        diffs <- abs(journal$date[i] - ex_dates)
+        best_row <- ex_rows[which.min(diffs)]
+        journal$amount[i] <- prices$price[best_row]*journal$amount[i]
+        journal$currency[i] <- paste0(out_currency,'-eqv')
+      } else {
+        stop( paste(journal$currency[i], "and", out_currency, "have no pairing
+          in the exchange rate table") ) 
+      }
     }
-  } # ok good, but what if the numerare isn't in numerare commodity?
+  } 
   return(journal)
 }
 
@@ -277,23 +318,26 @@ balance_accounts <- function(){
   transaction_list <- sort(unique(d$tid))
 
   transaction_balance <- rep(NA, length(transaction_list))
+  transaction_posts <- rep(NA, length(transaction_list))
   valid_tags <- rep(FALSE, length(transaction_list))
   
   for(i in 1:length(transaction_list)){
 
-  tid_rows <- which(d$tid==transaction_list[i])
+    tid_rows <- which(d$tid==transaction_list[i])
 
-  transaction_balance[i] <- sum(d$amount[tid_rows])
+    transaction_posts[i] <- length(tid_rows)
+    transaction_balance[i] <- sum(d$amount[tid_rows])
 
-  valid_tags[i] <- all(d$tag[tid_rows] %in% a$account)
-  # excludes multi-account tags, e.g. 'misc'
+    valid_tags[i] <- all(d$tag[tid_rows] %in% a$account)
+    # excludes multi-account tags, e.g. 'misc'
 
-  # have to convert into a single currency first to confirm balances
-  # if it doesn't balance, it might be b/c....
+    # have to convert into a single currency first to confirm balances
+    # if it doesn't balance, it might be b/c....
 
   }
 
-  mirror_these <- transaction_list[which( abs(transaction_balance) > 0.05 & valid_tags )]
+  # mirror_these <- transaction_list[which( abs(transaction_balance) > 0.05 & valid_tags )]
+  mirror_these <- transaction_list[which( transaction_posts==1 & valid_tags )]
 
   if(length(mirror_these)>0){
    

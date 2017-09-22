@@ -34,24 +34,6 @@ d <- d[o,]
 d$tid <- id_maker(nrow(d), nchar=5)
 write.csv(d, './csv/general_ledger.csv', row.names=FALSE)
 
-ledgr::summarize_accounts() 
-
-ledgr::balance_accounts()
-
-ledgr::seperate_accounts()
-
-ledgr::merge_accounts()
-
-# ledgr::audit_accounts() 
-# looks through the accounts for trouble:
-# - balances in assets go into negatives, imporrible
-# - balances in liabilities go into positives, impossible
-# - unbalanced transactions
-# - accounts that aren't in the accounts.csv file (or are NA)
-# - 
-
-
-# every function has to have a path...or it works with the files in memory perhaps?
 
 dir_init("./primary_sources")
 
@@ -81,13 +63,10 @@ my_filename <- paste0(my_filename, ".csv")
 write.csv(d, file.path('./primary_sources', my_filename), row.names=FALSE)
 
 
-# generate some multi=currency transactions with a fixed ratio
-# that goes into the time no problemo
-
 
 # add some dateshifting
 
-d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
 
 shift_tid <- sample(d$tid, 10)
 original_date <- d$date[match(shift_tid, d$tid)]
@@ -96,6 +75,91 @@ presentation_date <- as.Date(as.numeric(as.Date("2001-01-01")) + round(rnorm(len
 date_shifts <- data.frame(tid=shift_tid, original_date, presentation_date)
 write.csv(date_shifts, "./csv/date_shifts.csv", row.names=FALSE)
 
+
+# add some currency conversion
+
+exchange_rates <- data.frame(date=character(), 
+  denominator=character(), numerator=character(), price=character())
+
+ex_dates <- c("1999-01-01", "2000-01-01", "2001-01-01")
+denom <- c("eur", "eur", "eur")
+num <- c("usd", "usd", "usd")
+price <- c("1.1", "1.3", "1.5")
+
+ex <- data.frame(date=ex_dates, denominator=denom, numerator=num, price=price)
+
+write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
+
+
+
+# and some multi-currency transactions!
+
+input_file <- data.frame(date=character(), 
+  amount=character(),  tag=character(), notes=character(), 
+  account=character(), currency=character(), checksum=character(), 
+  tid=character(), balance=character())
+d <- input_file
+n_trans <- 6
+add <- matrix(NA, nrow=n_trans, ncol=ncol(d))
+colnames(add) <- colnames(d)
+d <- rbind(d, add)
+d$date <- rep(c("1999-10-01", "1999-08-15", "2000-08-03"), each=2)
+
+d$currency <- c("eur", "usd", "eur", "usd", "eur", "usd")
+
+d$account <- c("assets:deutsche_bank", "assets:petty_cash", "assets:deutsche_bank",
+ "assets:petty_cash", "assets:deutsche_bank", "assets:c1_360")
+d$tag <- c("assets:petty_cash", "assets:deutsche_bank",
+ "assets:petty_cash", "assets:deutsche_bank", "assets:c1_360", "assets:deutsche_bank")
+
+d$amount <- c(-100, 100*1.12, -100, 100*1.05, 100, -100*1.23)
+
+o <- order(d$date)
+d <- d[o,]
+
+d$tid <- rep(c("test_one", "test_two", "test_three"), each=2)
+
+my_filename <- id_maker(1, nchar=5)
+my_filename <- paste0(my_filename, ".csv")
+
+write.csv(d, file.path('./primary_sources', my_filename), row.names=FALSE)
+
+
+
+
+
+
+
+
+ledgr::format_exchange_rates()
+
+ledgr::summarize_accounts() 
+
+ledgr::balance_accounts()
+
+d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+table(d$tid)
+
+ledgr::seperate_accounts()
+
+ledgr::merge_accounts()
+
+
+# ledgr::audit_accounts() 
+# looks through the accounts for trouble:
+# - balances in assets go into negatives, imporrible
+# - balances in liabilities go into positives, impossible
+# - unbalanced transactions
+# - accounts that aren't in the accounts.csv file (or are NA)
+# - 
+
+
+# every function has to have a path...or it works with the files in memory perhaps?
+
+
+
+# generate some multi=currency transactions with a fixed ratio
+# that goes into the time no problemo
 
 
 ledgr::absorb_entries()
@@ -110,7 +174,38 @@ ledgr::seperate_accounts()
 
 ledgr::prepare_journal()
 
-ledgr::prepare_reports(account_depth=2)
+
+
+d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+table(table(d$tid))
+
+
+d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+table(table(d$tid))
+
+ledgr::absorb_entries()
+
+ledgr::summarize_accounts()
+
+ledgr::balance_accounts()
+
+ledgr::prepare_journal() 
+# journal should drop bad tids
+
+
+d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+table(table(d$tid))
+
+
+d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+table(table(d$tid))
+
+ d <- exchange(d, xe, 'eur')
+
+# balance accounts has to take into account currency exchanges first!! thats how it decides there's something missing....
+
+
+ledgr::prepare_reports()
 
 # add a 'depth' flag so you can reduce subaccounts easily
 
@@ -126,10 +221,6 @@ ledgr::prepare_reports(account_depth=2)
 # 4. some kind of rmarkdown script?
 
 d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
-
-xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
-
-d <- exchange(d, xe, 'eur')
 
 
 
