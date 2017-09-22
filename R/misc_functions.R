@@ -242,7 +242,7 @@ format_exchange_rates <- function(){
     ex <- ex[o,]
 
     drop <- which(duplicated(ex))
-    ex <- ex[-drop,]
+    if(length(drop)>0) ex <- ex[-drop,]
 
     write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
 
