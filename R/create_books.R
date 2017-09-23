@@ -2,7 +2,7 @@
 
 create_books <- function(path){
 
-  dir_init(path)
+  dir_init(path, overwrite=FALSE)
   dir_init(file.path(path, 'csv'))
 
   # aid isn't really necessary, is it? no, its not! neither is "accounts"

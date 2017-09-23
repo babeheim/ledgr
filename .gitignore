@@ -53,4 +53,6 @@ Thumbs.db
 *.Rhistory
 *.Rproj.user
 
-/test-books/
+/tests/test-books/*
+/tests/bret_books/*
+/tests/simple_test/*
