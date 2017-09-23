@@ -10,6 +10,17 @@ truncate_accounts <- function(string, level=NA){
     return(output)
 }
 
+
+shift_dates <- function(journal, dateshift){
+  dateshift$original_date <- fix_dates(dateshift$original_date)
+  dateshift$presentation_date <- fix_dates(dateshift$presentation_date)
+  shift_tar <- which(journal$tid %in% dateshift$tid)
+  if(length(shift_tar)>0){
+    journal$date[shift_tar] <- as.character(dateshift$presentation_date[match(journal$tid[shift_tar], dateshift$tid)])
+  }    
+  return(journal)
+}
+
 prepare_reports <- function(account_depth=2, currency="eur"){
   
   if(!file.exists('./csv/accounts.csv')) stop("accounts.csv has not been created; run summarize_accounts first")
@@ -19,13 +30,8 @@ prepare_reports <- function(account_depth=2, currency="eur"){
   d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
 
   dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
-  
-  dateshift$original_date <- fix_dates(dateshift$original_date)
-  dateshift$presentation_date <- fix_dates(dateshift$presentation_date)
-  shift_tar <- which(d$tid %in% dateshift$tid)
-  if(length(shift_tar)>0){
-    d$date[shift_tar] <- dateshift$presentation_date[match(d$tid[shift_tar], dateshift$tid)]
-  }
+    
+  d <- shift_dates(d, dateshift)
 
   d$account <- truncate_accounts(d$account, level=account_depth)
   a$account <- truncate_accounts(a$account, level=account_depth)
