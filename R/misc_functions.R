@@ -382,13 +382,19 @@ prepare_journal <- function(){
 }
 
 
-balance_accounts <- function(){
+balance_accounts <- function(na.rm=FALSE){
 
   d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
   a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
 
-  if(any(is.na(d$tag) | is.na(d$account))) stop("some accounts or tags are NA")
-
+  if(na.rm){
+    drop <- which(is.na(d$tag) | is.na(d$account))
+    d <- d[-drop,]
+    print(paste(drop, " posts dropped for having NA in tag or account"))
+  } else {
+    if(any(is.na(d$tag) | is.na(d$account))) stop("some accounts or tags are NA")
+  }
+  
   tar <- which(is.na(d$tid))
   if(length(tar)>0) d$tid[tar] <- id_maker(length(tar), nchar=5, reserved=d$tid)
 
