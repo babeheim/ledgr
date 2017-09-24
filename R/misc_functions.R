@@ -303,10 +303,12 @@ format_exchange_rates <- function(){
 
     ex <- rbind(ex, ex2)
 
+    ex$price <- round(ex$price, 4)
+
     o <- rev(order(ex$date))
     ex <- ex[o,]
 
-    drop <- which(duplicated(ex))
+    drop <- which(duplicated(ex[,c("denominator", "numerator", "date")]))
     if(length(drop)>0) ex <- ex[-drop,]
 
     write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
@@ -315,19 +317,18 @@ format_exchange_rates <- function(){
 
 }
 
-# unit test: try to exchange currencies that have no pairings
-# unit test: try to exchange currencies when last observed price is REALLY FAR AWAY
 
 exchange <- function(journal, prices, out_currency){
   journal$date <- fix_dates(journal$date)
   prices$date <- fix_dates(prices$date)
   for(i in 1:nrow(journal)){
     if(journal$currency[i]!=out_currency & !is.na(journal$date[i])){
-      ex_rows <- which(prices$numerator==journal$currency[i] & prices$denominator==out_currency)
+      ex_rows <- which(prices$denominator==journal$currency[i] & prices$numerator==out_currency)
       if(length(ex_rows)>0){
         ex_dates <- prices$date[ex_rows]
         diffs <- abs(journal$date[i] - ex_dates)
         best_row <- ex_rows[which.min(diffs)]
+        if(diffs[which.min(diffs)] > 365) warning(paste0("transaction ", journal$tid[i], " does not have a recent exchange rate"))
         journal$amount[i] <- prices$price[best_row]*journal$amount[i]
         journal$currency[i] <- paste0(out_currency,'-eqv')
       } else {

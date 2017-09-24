@@ -1,13 +1,15 @@
 
+rm(list=ls())
+
 library(devtools)
 
 devtools::load_all()
 
 # install_github("babeheim/ledgr")
 
-ledgr::create_books('./simple_test')
+ledgr::create_books('./currency_tests')
 
-setwd("./simple_test")
+setwd("./currency_tests")
 
 library(testthat)
 
@@ -28,7 +30,7 @@ d <- rbind(d, add)
 d$date <- as.Date(as.numeric(as.Date("2000-01-01")) + round(rnorm(n_trans, 0, 1000)), origin="1970-01-01")
 account_list <- c("assets:deutsche_bank", "assets:paypal", "liabilities:chase_freedom_cc")
 tag_list <- c("expenses:food:restaurant", "expenses:food:groceries", "expenses:rent", "income:mpi:salary", "income:mpi:grants")
-currency_list <- c("usd", "eur")
+currency_list <- c("yen", "eur")
 d$account <- sample(account_list, nrow(d), prob=c(1:length(account_list)), replace=TRUE)
 d$tag <- sample(tag_list, nrow(d), prob=c(1:length(tag_list)), replace=TRUE)
 d$amount <- round(rnorm(nrow(d), 0, 20), 2)
@@ -52,12 +54,13 @@ colnames(add) <- colnames(d)
 d <- rbind(d, add)
 d$date <- as.Date(as.numeric(as.Date("2001-01-01")) + round(rnorm(n_trans, 0, 1000)), origin="1970-01-01")
 tag_list <- c("expenses:food:restaurant", "expenses:food:groceries", "expenses:rent", "income:mpi:salary", "income:mpi:grants")
-currency_list <- c("usd", "eur")
+currency_list <- c("yen", "eur")
 d$account <- "assets:roth_IRA"
 d$tag <- sample(tag_list, nrow(d), prob=c(1:length(tag_list)), replace=TRUE)
 d$amount <- round(rnorm(nrow(d), 0, 20), 2)
-d$currency <- sample(currency_list, nrow(d), prob=c(0.9, 0.1), replace=TRUE) # all unique
+d$currency <- sample(currency_list, nrow(d), prob=c(0.1, 0.9), replace=TRUE) # all unique
 
+d$amount[d$currency=="yen"] <- d$amount[d$currency=="yen"]*1000
 
 o <- order(d$date)
 d <- d[o,]
@@ -89,7 +92,7 @@ exchange_rates <- data.frame(date=character(),
 
 ex_dates <- c("1999-01-01", "2000-01-01", "2001-01-01")
 denom <- c("eur", "eur", "eur")
-num <- c("usd", "usd", "usd")
+num <- c("yen", "yen", "yen")
 price <- c("110", "130", "150")
 
 ex <- data.frame(date=ex_dates, denominator=denom, numerator=num, price=price)
@@ -111,14 +114,14 @@ colnames(add) <- colnames(d)
 d <- rbind(d, add)
 d$date <- rep(c("1999-10-01", "1999-08-15", "2000-08-03"), each=2)
 
-d$currency <- c("eur", "usd", "eur", "usd", "eur", "usd")
+d$currency <- c("eur", "yen", "eur", "yen", "eur", "yen")
 
 d$account <- c("assets:deutsche_bank", "assets:petty_cash", "assets:deutsche_bank",
  "assets:petty_cash", "assets:deutsche_bank", "assets:c1_360")
 d$tag <- c("assets:petty_cash", "assets:deutsche_bank",
  "assets:petty_cash", "assets:deutsche_bank", "assets:c1_360", "assets:deutsche_bank")
 
-d$amount <- c(-100, 100*1.1, -100, 100*1.05, 100, -100*1.23)
+d$amount <- c(-100, 100*110, -100, 100*105, 100, -100*123)
 
 o <- order(d$date)
 d <- d[o,]
@@ -138,39 +141,19 @@ write.csv(d, file.path('./primary_sources', my_filename), row.names=FALSE)
 ##############
 
 
-test_that("fix_dates works", {
+ledgr::absorb_entries()
+# im really gonna need a timestamp...hmmm...
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  ds <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
+test_that("test entries are absorbed", {
 
-  x <- as.Date(fix_dates(ds$original_date))  
-  expect_true( class(x)=="Date" )
-  expect_true( sum(is.na(x))==0 )
-
-  x <- as.Date(fix_dates(ds$presentation_date))
-  expect_true( class(x)=="Date" )
-  expect_true( sum(is.na(x))==0 )
-
-  x <- as.Date(fix_dates(d$date))
-  expect_true( class(x)=="Date" )
-  expect_true( sum(is.na(x))==0 )
+  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=TRUE)
+  expect_true(all(c("test_one", "test_two", "test_three") %in% d$tid))
 
 })
 
 
-
-test_that("shift_dates works", {
-
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  ds <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
-
-  d <- shift_dates(d, ds)
-
-  expect_true(all(ds$presentation_date==d$date[match(ds$tid, d$tid)]))
-
-})
-
-
+# unit test: try to exchange currencies that have no pairings
+# unit test: try to exchange currencies when last observed price is REALLY FAR AWAY
 
 test_that("exchange rates fail if not formatted", {
 
@@ -178,12 +161,13 @@ test_that("exchange rates fail if not formatted", {
   xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
   expect_error(exchange(d, xe, "eur"))
-  # needs more testing....
+
+  expect_true( length(unique(d$currency))==2 )
 
   d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
   xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
-  expect_true( length(unique(d$currency))==2 )
+#   expect_error(exchange(d, xe, "yen"))
   # needs more testing....
 
 })
@@ -207,29 +191,25 @@ test_that("exchange rates work once formatted", {
   # needs more testing....
 
   expect_true( length(unique(d$currency))==2 )
+  expect_true( abs(sum(d$amount[d$tid=="test_one"])/d$amount[d$tid=="test_one"][1]) < 0.3 )
+  expect_true( abs(sum(d$amount[d$tid=="test_two"])/d$amount[d$tid=="test_two"][1]) < 0.3 )
+  expect_true( abs(sum(d$amount[d$tid=="test_three"])/d$amount[d$tid=="test_three"][1]) < 0.3 )
 
   d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
   xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
-  d <- exchange(d, xe, "usd") 
+  d <- exchange(d, xe, "yen") 
   # needs more testing....
 
   expect_true( length(unique(d$currency))==2 )
+  expect_true( abs(sum(d$amount[d$tid=="test_one"])/d$amount[d$tid=="test_one"][1]) < 0.3 )
+  expect_true( abs(sum(d$amount[d$tid=="test_two"])/d$amount[d$tid=="test_two"][1]) < 0.3 )
+  expect_true( abs(sum(d$amount[d$tid=="test_three"])/d$amount[d$tid=="test_three"][1]) < 0.3 )
 
 })
 
 
 
-
-ledgr::absorb_entries()
-# im really gonna need a timestamp...hmmm...
-
-test_that("test entries are absorbed", {
-
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=TRUE)
-  expect_true(all(c("test_one", "test_two", "test_three") %in% d$tid))
-
-})
 
 
 ledgr::summarize_accounts() 
@@ -242,7 +222,9 @@ ledgr::balance_accounts()
 
 test_that("accounts balance", {
   d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  expect_true(abs(sum(d$amount)) < 10)
+  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  d <- exchange(d, xe, 'eur')
+  expect_true(abs(sum(d$amount)) < 100) # lame
 })
 
 
