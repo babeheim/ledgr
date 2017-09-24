@@ -389,8 +389,10 @@ balance_accounts <- function(na.rm=FALSE){
 
   if(na.rm){
     drop <- which(is.na(d$tag) | is.na(d$account))
-    d <- d[-drop,]
-    print(paste(drop, " posts dropped for having NA in tag or account"))
+    if(length(drop)>0){ 
+      d <- d[-drop,]
+      print(paste(length(drop), " posts dropped for having NA in tag or account"))
+    }
   } else {
     if(any(is.na(d$tag) | is.na(d$account))) stop("some accounts or tags are NA")
   }
