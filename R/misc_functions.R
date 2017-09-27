@@ -388,6 +388,8 @@ balance_accounts <- function(na.rm=FALSE){
   d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
   a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
 
+  d$date <- fix_dates(d$date)
+
   if(na.rm){
     drop <- which(is.na(d$tag) | is.na(d$account))
     if(length(drop)>0){ 
@@ -426,16 +428,16 @@ balance_accounts <- function(na.rm=FALSE){
   mirror_these <- transaction_list[which( transaction_posts==1 & valid_tags )]
 
   if(length(mirror_these)>0){
-   
-  tar <- which(d$tid %in% mirror_these)
+     
+    tar <- which(d$tid %in% mirror_these)
 
-  add <- d[tar,]
+    add <- d[tar,]
 
-  add$tag <- d$account[tar]
-  add$account <- d$tag[tar]
-  add$amount <- (-1)*add$amount
+    add$tag <- d$account[tar]
+    add$account <- d$tag[tar]
+    add$amount <- (-1)*add$amount
 
-  d <- rbind(d, add)
+    d <- rbind(d, add)
 
   }
   # order ledger by transaction dates
@@ -456,6 +458,8 @@ balance_accounts <- function(na.rm=FALSE){
 summarize_accounts <- function(){
 
   d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+
+  d$date <- fix_dates(d$date)
 
   account_list <- sort(unique(c(d$account, d$tag))) # alphabetical order
 
@@ -509,6 +513,7 @@ merge_accounts <- function(){
   if(length(account_tables)>0){
     output <- read.csv(account_tables[1], stringsAsFactors=FALSE)
     for(i in 2:length(account_tables)) output <- rbind( output, read.csv(account_tables[i], stringsAsFactors=FALSE) )
+    output$date <- fix_dates(output$date)
     o <- rev(order(output$date))
     output <- output[o,]
     file.remove(account_tables)
