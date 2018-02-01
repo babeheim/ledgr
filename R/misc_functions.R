@@ -2,10 +2,13 @@
 # balance transactiosn shoudl fail if any are NA
 
 
-audit_accounts <- function(){
+audit_accounts <- function(wb){
 
-  a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+  # a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
+  # d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+
+  a <- wb$accounts
+  d <- wb$ledger
 
   if(any(is.na(d$currency))) stop("some currencies are missing")
   if(any(is.na(as.numeric(d$amount)))) stop("some amounts are missing")
@@ -33,7 +36,8 @@ audit_accounts <- function(){
 
   output$n_bad_accounts <- sum(!account_list %in% a$account)
   
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  xe <- wb$exchange
+#  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
   d <- exchange(d, xe, "eur")
 
   trans_check <- abs(tapply(d$amount, d$tid, sum))
@@ -56,13 +60,13 @@ scrub_text <- function(input_string){
 
 
 truncate_accounts <- function(string, level=NA){
-    output <- string
-    output[is.na(output)] <- ''
-    for(i in 1:length(string)){
-        break_pos <- gregexpr(':', output[i])[[1]]
-        if(!is.na(break_pos[level]) & break_pos[level]!='-1') output[i] <- substr(output[i], 1, break_pos[level]-1) 
-    }
-    return(output)
+  output <- string
+  output[is.na(output)] <- ''
+  for(i in 1:length(string)){
+      break_pos <- gregexpr(':', output[i])[[1]]
+      if(!is.na(break_pos[level]) & break_pos[level]!='-1') output[i] <- substr(output[i], 1, break_pos[level]-1) 
+  }
+  return(output)
 }
 
 
@@ -76,15 +80,23 @@ shift_dates <- function(journal, dateshift){
   return(journal)
 }
 
-prepare_reports <- function(account_depth=2, currency="eur"){
+prepare_reports <- function(wb, account_depth=2, currency="eur"){
   
-  if(!file.exists('./csv/accounts.csv')) stop("accounts.csv has not been created; run summarize_accounts first")
-  if(!file.exists('./csv/journal.csv')) stop("journal.csv has not been created; run prepare_journal first")
-      
-  a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
-  d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+  if(!"accounts" %in% names(wb)) stop("accounts table has not been created; run summarize_accounts first")
+  if(!"journal" %in% names(wb)) stop("journal table has not been created; run prepare_journal first")
 
-  dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
+#  if(!file.exists('./csv/accounts.csv')) stop("accounts.csv has not been created; run summarize_accounts first")
+#  if(!file.exists('./csv/journal.csv')) stop("journal.csv has not been created; run prepare_journal first")
+      
+  a <- wb$accounts
+  d <- wb$journal
+
+  # a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
+  # d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
+
+  dateshift <- wb$dates
+
+#  dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
     
   d <- shift_dates(d, dateshift)
 
@@ -95,7 +107,8 @@ prepare_reports <- function(account_depth=2, currency="eur"){
   if(length(drop)>0) a <- a[-drop,]
 
   # convert currencies
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  xe <- wb$exchange
+#  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
   d <- exchange(d, xe, currency)
 
   drop <- which(is.na(d$date))
@@ -211,27 +224,15 @@ prepare_reports <- function(account_depth=2, currency="eur"){
 }
 
 
-absorb_entries <- function(){
+absorb_entries <- function(ledger, add){
 
-  d <- read.csv("./csv/general_ledger.csv", stringsAsFactors=FALSE)
+  d <- ledger
 
-  inputs <- list.files("./primary_sources", pattern="*.csv", full.names=TRUE)
-
-  add <- data.frame(date=character(), 
-  amount=character(),  tag=character(), notes=character(), 
-  account=character(), currency=character(), checksum=character(), 
-  tid=character(), balance=character()) 
-
-  if(length(inputs)>0){
-    for(i in 1:length(inputs)){
-      add <- rbind(add, read.csv(inputs[i], stringsAsFactors=FALSE))
-    }
-  }
+#  d <- read.csv("./csv/general_ledger.csv", stringsAsFactors=FALSE)
 
   # detect if entries are not present in the general ledger, timestamp and amount!
   # do we require that the tags be completed on the primary sources? no!
 
-  # need time here too..
   ledger_key <- paste(d$date, d$amount, d$account)
   add_key <- paste(add$date, add$amount, add$account)
 
@@ -241,7 +242,8 @@ absorb_entries <- function(){
     d <- rbind(d, add[keep,])
     o <- order(d$date)
     d <- d[o,]
-    write.csv(d, './csv/general_ledger.csv', row.names=FALSE)
+ #   write.csv(d, './csv/general_ledger.csv', row.names=FALSE)
+    return(d)
   }
 
 }
@@ -286,11 +288,12 @@ fix_dates <- function(dates){
   return(dates)
 }
 
-format_exchange_rates <- function(){
+format_exchange_rates <- function(wb){
 
  # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
 
-  ex <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  ex <- wb$exchange
+#  ex <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
   if(nrow(ex) > 0){
 
@@ -311,7 +314,8 @@ format_exchange_rates <- function(){
     drop <- which(duplicated(ex[,c("denominator", "numerator", "date")]))
     if(length(drop)>0) ex <- ex[-drop,]
 
-    write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
+ #   write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
+    return(ex)
 
   }
 
@@ -341,20 +345,10 @@ exchange <- function(journal, prices, out_currency){
 }
 
 
-set_dates <- function(){
+prepare_journal <- function(wb){
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  
-  o <- order(d$date, decreasing=TRUE)
-  d <- d[o,]
-
-  write.csv(d, "./csv/general_ledger.csv", row.names=FALSE)  
-
-}
-
-prepare_journal <- function(){
-
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
+#  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
 
   d$date <- fix_dates(d$date)
   d$date <- as.character(d$date)
@@ -378,15 +372,19 @@ prepare_journal <- function(){
   o <- order(match(d$tid, treg$tid))
   d <- d[o,]
 
-  write.csv(d, './csv/journal.csv', row.names=FALSE)
+#  write.csv(d, './csv/journal.csv', row.names=FALSE)
+  return(d)
 
 }
 
 
-balance_accounts <- function(na.rm=FALSE){
+balance_accounts <- function(wb, na.rm=FALSE){
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
+  a <- wb$accounts
+
+#  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+#  a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
 
   d$date <- fix_dates(d$date)
 
@@ -450,14 +448,16 @@ balance_accounts <- function(na.rm=FALSE){
   o <- order(match(d$tid, treg$tid))
   d <- d[o,]
 
-  write.csv(d, "./csv/general_ledger.csv", row.names=FALSE)
+#  write.csv(d, "./csv/general_ledger.csv", row.names=FALSE)
+  return(d)
 
 }
 
 
-summarize_accounts <- function(){
+summarize_accounts <- function(wb){
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+  # d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
 
   d$date <- fix_dates(d$date)
 
@@ -487,41 +487,42 @@ summarize_accounts <- function(){
   output <- data.frame(account=account_list, n_postings, start_date, 
   last_date, net_flow, n_checksums)
  
-  write.csv(output, "./csv/accounts.csv", row.names=FALSE)
+#  write.csv(output, "./csv/accounts.csv", row.names=FALSE)
+  return(output)
 
 }
 
-seperate_accounts <- function(){
-  # key element: only accounts in the 'accounts' column get counted
-  # should have a force flag and detects if postings are alreayd in these accounts
-  # that are not in the general ledger
-  d <- read.csv("./csv/general_ledger.csv", stringsAsFactors=FALSE)
-  a <- read.csv("./csv/accounts.csv", stringsAsFactors=FALSE)
-  if(!all(d$accounts %in% a$account)) stop("not all ledger accounts are in the account list") # check
-  account_names <- paste0("account_", a$account, ".csv")
-  account_names <- gsub(":", "_", account_names)
-  account_names <- file.path("./csv", account_names)
-  for(i in 1:length(account_names)){
-    tar <- which(d$account==a$account[i])
-    write.csv(d[tar,], account_names[i], row.names=FALSE)
-  }
-}
+# seperate_accounts <- function(){
+#   # key element: only accounts in the 'accounts' column get counted
+#   # should have a force flag and detects if postings are alreayd in these accounts
+#   # that are not in the general ledger
+#   d <- read.csv("./csv/general_ledger.csv", stringsAsFactors=FALSE)
+#   a <- read.csv("./csv/accounts.csv", stringsAsFactors=FALSE)
+#   if(!all(d$accounts %in% a$account)) stop("not all ledger accounts are in the account list") # check
+#   account_names <- paste0("account_", a$account, ".csv")
+#   account_names <- gsub(":", "_", account_names)
+#   account_names <- file.path("./csv", account_names)
+#   for(i in 1:length(account_names)){
+#     tar <- which(d$account==a$account[i])
+#     write.csv(d[tar,], account_names[i], row.names=FALSE)
+#   }
+# }
 
-merge_accounts <- function(){
-  # should have a force flag and detects if postings are in gl not in account ledgers
-  account_tables <- list.files("./csv", pattern="^account_", full.names=TRUE)
-  if(length(account_tables)>0){
-    output <- read.csv(account_tables[1], stringsAsFactors=FALSE)
-    for(i in 2:length(account_tables)) output <- rbind( output, read.csv(account_tables[i], stringsAsFactors=FALSE) )
-    output$date <- fix_dates(output$date)
-    o <- rev(order(output$date))
-    output <- output[o,]
-    file.remove(account_tables)
-    write.csv(output, "./csv/general_ledger.csv", row.names=FALSE)
-    } else {
-      stop("account tables have not been created; try running seperate_accounts first")
-    }
-}
+# merge_accounts <- function(){
+#   # should have a force flag and detects if postings are in gl not in account ledgers
+#   account_tables <- list.files("./csv", pattern="^account_", full.names=TRUE)
+#   if(length(account_tables)>0){
+#     output <- read.csv(account_tables[1], stringsAsFactors=FALSE)
+#     for(i in 2:length(account_tables)) output <- rbind( output, read.csv(account_tables[i], stringsAsFactors=FALSE) )
+#     output$date <- fix_dates(output$date)
+#     o <- rev(order(output$date))
+#     output <- output[o,]
+#     file.remove(account_tables)
+#     write.csv(output, "./csv/general_ledger.csv", row.names=FALSE)
+#     } else {
+#       stop("account tables have not been created; try running seperate_accounts first")
+#     }
+# }
 
 
 
