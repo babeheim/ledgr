@@ -288,16 +288,16 @@ fix_dates <- function(dates){
   return(dates)
 }
 
-format_exchange_rates <- function(wb){
+format_exchange_rates <- function(ex){
 
  # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
 
-  ex <- wb$exchange
 #  ex <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
   if(nrow(ex) > 0){
 
     ex$date <- fix_dates(ex$date)
+    ex$price <- as.numeric(ex$price)
 
     ex2 <- ex
     ex2$denominator <- ex$numerator
@@ -388,7 +388,7 @@ balance_accounts <- function(wb, na.rm=FALSE){
 
   d$date <- fix_dates(d$date)
 
-  if(na.rm){
+  if(na.rm == TRUE){
     drop <- which(is.na(d$tag) | is.na(d$account))
     if(length(drop)>0){ 
       d <- d[-drop,]
