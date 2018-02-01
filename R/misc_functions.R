@@ -96,7 +96,7 @@ prepare_reports <- function(account_depth=2, currency="eur"){
 
   # convert currencies
   xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
-  d <- exchange(d, xe, 'eur')
+  d <- exchange(d, xe, currency)
 
   drop <- which(is.na(d$date))
   if(length(drop)>0) d <- d[-drop,]
