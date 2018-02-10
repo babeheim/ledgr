@@ -248,7 +248,7 @@ prepare_reports <- function(wb, account_depth = 2, currency="eur"){
 
 absorb_entries <- function(wb, add){
 
-  if(class(wb) != "list" | "ledger" %in% names(wb)) stop("first argument is not a valid ledgr workbook")
+  if(class(wb) != "list" | !"ledger" %in% names(wb)) stop("first argument is not a valid ledgr workbook")
   d <- wb$ledger
 
   # detect if entries are not present in the general ledger, timestamp and amount!
