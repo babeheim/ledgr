@@ -276,7 +276,7 @@ absorb_entries <- function(ledger, add){
   # double entry requires a source/destination in all records at all times
   drop <- which(is.na(add$tag) | is.na(add$date) | is.na(add$amount) | is.na(add$account))
   if(length(drop)>0){
-    print( paste0( length(drop), " records were ignored due to incomplete information (e.g. tagging)") )
+    warning( paste0( length(drop), " records were ignored due to incomplete information (e.g. tagging)") )
     add <- add[-drop,]
   }
 
@@ -415,7 +415,7 @@ prepare_journal <- function(wb){
 }
 
 
-balance_accounts <- function(wb, na.rm=FALSE){
+balance_accounts <- function(wb){
 
   d <- wb$ledger
 
@@ -424,15 +424,7 @@ balance_accounts <- function(wb, na.rm=FALSE){
 
   d$date <- fix_dates(d$date)
 
-  if(na.rm == TRUE){
-    drop <- which(is.na(d$tag) | is.na(d$account))
-    if(length(drop)>0){ 
-      d <- d[-drop,]
-      print(paste(length(drop), " posts dropped for having NA in tag or account"))
-    }
-  } else {
-    if(any(is.na(d$tag) | is.na(d$account))) stop("some accounts or tags are NA")
-  }
+  if(any(is.na(d$tag) | is.na(d$account))) stop("some accounts or tags are NA")
   
   tar <- which(is.na(d$tid))
   if(length(tar)>0) d$tid[tar] <- id_maker(length(tar), nchar=5, reserved=d$tid)

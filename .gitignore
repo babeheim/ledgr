@@ -57,3 +57,4 @@ Thumbs.db
 /tests/bret_books/*
 /tests/simple_test/*
 /tests/currency_tests/*
+/tests/missing_tags/*
