@@ -127,6 +127,10 @@ prepare_reports <- function(wb, account_depth = 2, currency="eur"){
 
   dir_init("./reports", overwrite=FALSE)
 
+  # inverse values
+
+  d$amount <- (-1)*d$amount
+ 
   # income expense
 
   min_year <- as.numeric(substr(min(d$date), 1, 4))
@@ -180,6 +184,9 @@ prepare_reports <- function(wb, account_depth = 2, currency="eur"){
     write.csv(out, my_name, row.names=TRUE)
   }
 
+  # inverse values
+
+  d$amount <- (-1)*d$amount
 
   # account_balances
 
@@ -241,6 +248,7 @@ prepare_reports <- function(wb, account_depth = 2, currency="eur"){
 
 absorb_entries <- function(wb, add){
 
+  if(class(wb) != "list" | "ledger" %in% names(wb)) stop("first argument is not a valid ledgr workbook")
   d <- wb$ledger
 
   # detect if entries are not present in the general ledger, timestamp and amount!
