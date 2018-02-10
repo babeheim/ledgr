@@ -1,16 +1,12 @@
 
-library(devtools)
-
-devtools::load_all()
-
+# library(devtools)
+# devtools::load_all()
 # install_github("babeheim/ledgr")
 
 dir_init('./simple_test')
 setwd('./simple_test')
 
-
 wb <- ledgr::init_workbook()
-
 
 library(testthat)
 
@@ -239,6 +235,8 @@ test_that("exchange rates work once formatted", {
 wb$exchange <- ledgr::format_exchange_rates(ex)
 
 
+
+# test that: new entries with no tag are ignored with warning 
 
 # im really gonna need a timestamp...hmmm...
 

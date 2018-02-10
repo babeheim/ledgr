@@ -2,10 +2,62 @@
 # balance transactiosn shoudl fail if any are NA
 
 
-audit_accounts <- function(wb){
+init_workbook <- function(){
+  
+  dates <- data.frame(tid=character(), 
+    original_date=character(), presentation_date=character())
 
-  # a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
-  # d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+  exchange <- data.frame(date=character(), 
+    denominator=character(), numerator=character(), 
+    price=character())
+
+  ledger <- data.frame(date=character(), 
+    amount=character(),  tag=character(), 
+    notes=character(), account=character(), 
+    currency=character(),  checksum=character(), 
+    tid=character(), balance=character())
+
+  output <- list(ledger, exchange, dates)
+  names(output) <- c("ledger", "exchange", "dates")
+  return(output)
+
+}
+
+load_workbook <- function(path){
+
+  files <- list.files( file.path(path, "csv") )
+  if( ! all( c("date_shifts.csv", "general_ledger.csv", 
+    "exchange_rates.csv") %in% files )){
+    stop("not a valid workbook, check that it has the three necessary files!")
+  }
+  wb <- list()
+  wb$ledger <- read.csv( file.path(path, "csv", "general_ledger.csv"), stringsAsFactors=FALSE)
+  wb$exchange <- read.csv( file.path(path, "csv", "exchange_rates.csv"), stringsAsFactors=FALSE)
+  wb$dates <- read.csv( file.path(path, "csv", "date_shifts.csv"), stringsAsFactors=FALSE)
+  if("journal.csv" %in% files) wb$journal <- read.csv( file.path(path, "csv", "journal.csv"), stringsAsFactors=FALSE)
+  if("accounts.csv" %in% files) wb$accounts <- read.csv( file.path(path, "csv", "accounts.csv"), stringsAsFactors=FALSE)
+  
+  wb$ledger$date <- fix_dates(wb$ledger$date)
+  wb$exchange$date <- fix_dates(wb$exchange$date)
+
+  return(wb)
+
+}
+
+save_workbook <- function(wb){
+
+  write.csv(wb$ledger, "./csv/general_ledger.csv", row.names=FALSE)
+  write.csv(wb$dates, "./csv/date_shifts.csv", row.names=FALSE)
+  write.csv(wb$exchange, "./csv/exchange_rates.csv", row.names=FALSE)
+  if("journal" %in% names(wb)) write.csv(wb$journal, "./csv/journal.csv", row.names=FALSE)
+  if("accounts" %in% names(wb)) write.csv(wb$accounts.csv, "./csv/accounts.csv", row.names=FALSE)
+
+  return("workbook saved to disk")
+
+}
+
+
+audit_accounts <- function(wb){
 
   a <- wb$accounts
   d <- wb$ledger
@@ -37,7 +89,6 @@ audit_accounts <- function(wb){
   output$n_bad_accounts <- sum(!account_list %in% a$account)
   
   xe <- wb$exchange
-#  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
   d <- exchange(d, xe, "eur")
 
   trans_check <- abs(tapply(d$amount, d$tid, sum))
@@ -85,19 +136,11 @@ prepare_reports <- function(wb, account_depth=2, currency="eur"){
   if(!"accounts" %in% names(wb)) stop("accounts table has not been created; run summarize_accounts first")
   if(!"journal" %in% names(wb)) stop("journal table has not been created; run prepare_journal first")
 
-#  if(!file.exists('./csv/accounts.csv')) stop("accounts.csv has not been created; run summarize_accounts first")
-#  if(!file.exists('./csv/journal.csv')) stop("journal.csv has not been created; run prepare_journal first")
-      
   a <- wb$accounts
   d <- wb$journal
 
-  # a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
-  # d <- read.csv('./csv/journal.csv', stringsAsFactors=FALSE)
-
   dateshift <- wb$dates
 
-#  dateshift <- read.csv('./csv/date_shifts.csv', stringsAsFactors=FALSE)
-    
   d <- shift_dates(d, dateshift)
 
   d$account <- truncate_accounts(d$account, level=account_depth)
@@ -108,7 +151,6 @@ prepare_reports <- function(wb, account_depth=2, currency="eur"){
 
   # convert currencies
   xe <- wb$exchange
-#  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
   d <- exchange(d, xe, currency)
 
   drop <- which(is.na(d$date))
@@ -228,13 +270,18 @@ absorb_entries <- function(ledger, add){
 
   d <- ledger
 
-#  d <- read.csv("./csv/general_ledger.csv", stringsAsFactors=FALSE)
-
   # detect if entries are not present in the general ledger, timestamp and amount!
   # do we require that the tags be completed on the primary sources? no!
 
-  ledger_key <- paste(d$date, d$amount, d$account)
-  add_key <- paste(add$date, add$amount, add$account)
+  # double entry requires a source/destination in all records at all times
+  drop <- which(is.na(add$tag) | is.na(add$date) | is.na(add$amount) | is.na(add$account))
+  if(length(drop)>0){
+    print( paste0( length(drop), " records were ignored due to incomplete information (e.g. tagging)") )
+    add <- add[-drop,]
+  }
+
+  ledger_key <- paste(d$date, d$amount, d$account, d$tag)
+  add_key <- paste(add$date, add$amount, add$account, add$tag)
 
   keep <- which(!add_key %in% ledger_key)
 
@@ -242,7 +289,6 @@ absorb_entries <- function(ledger, add){
     d <- rbind(d, add[keep,])
     o <- order(d$date)
     d <- d[o,]
- #   write.csv(d, './csv/general_ledger.csv', row.names=FALSE)
     return(d)
   }
 
@@ -289,11 +335,7 @@ fix_dates <- function(dates){
 }
 
 format_exchange_rates <- function(ex){
-
  # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
-
-#  ex <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
-
   if(nrow(ex) > 0){
 
     ex$date <- fix_dates(ex$date)
@@ -314,7 +356,6 @@ format_exchange_rates <- function(ex){
     drop <- which(duplicated(ex[,c("denominator", "numerator", "date")]))
     if(length(drop)>0) ex <- ex[-drop,]
 
- #   write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
     return(ex)
 
   }
@@ -348,7 +389,6 @@ exchange <- function(journal, prices, out_currency){
 prepare_journal <- function(wb){
 
   d <- wb$ledger
-#  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
 
   d$date <- fix_dates(d$date)
   d$date <- as.character(d$date)
@@ -358,8 +398,6 @@ prepare_journal <- function(wb){
 
   drop <- which(colnames(d) %in% c('tag', 'checksum'))
   if(length(drop)>0) d <- d[,-drop]
-
-  # d$notes <- substr(1, 50, d$notes)
 
   tid_list <- unique(d$tid)
   tid_date <- d$date[match(tid_list, d$tid)]
@@ -372,7 +410,6 @@ prepare_journal <- function(wb){
   o <- order(match(d$tid, treg$tid))
   d <- d[o,]
 
-#  write.csv(d, './csv/journal.csv', row.names=FALSE)
   return(d)
 
 }
@@ -381,10 +418,9 @@ prepare_journal <- function(wb){
 balance_accounts <- function(wb, na.rm=FALSE){
 
   d <- wb$ledger
-  a <- wb$accounts
 
-#  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-#  a <- read.csv('./csv/accounts.csv', stringsAsFactors=FALSE)
+  if(!"accounts" %in% names(wb)) stop("no accounts table in the workbook")
+  a <- wb$accounts
 
   d$date <- fix_dates(d$date)
 
@@ -448,7 +484,6 @@ balance_accounts <- function(wb, na.rm=FALSE){
   o <- order(match(d$tid, treg$tid))
   d <- d[o,]
 
-#  write.csv(d, "./csv/general_ledger.csv", row.names=FALSE)
   return(d)
 
 }
@@ -456,7 +491,6 @@ balance_accounts <- function(wb, na.rm=FALSE){
 
 summarize_accounts <- function(wb){
 
-  # d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
   d <- wb$ledger
 
   d$date <- fix_dates(d$date)
@@ -487,7 +521,6 @@ summarize_accounts <- function(wb){
   output <- data.frame(account=account_list, n_postings, start_date, 
   last_date, net_flow, n_checksums)
  
-#  write.csv(output, "./csv/accounts.csv", row.names=FALSE)
   return(output)
 
 }

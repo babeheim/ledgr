@@ -1,15 +1,14 @@
 
 rm(list=ls())
 
-library(devtools)
-
-devtools::load_all()
-
+# library(devtools)
+# devtools::load_all()
 # install_github("babeheim/ledgr")
 
-ledgr::create_books('./currency_tests')
+dir_init('./currency_tests')
+setwd('./currency_tests')
 
-setwd("./currency_tests")
+wb <- ledgr::init_workbook()
 
 library(testthat)
 
@@ -38,7 +37,45 @@ d$currency <- sample(currency_list, nrow(d), prob=c(0.9, 0.1), replace=TRUE) # a
 o <- order(d$date)
 d <- d[o,]
 d$tid <- id_maker(nrow(d), nchar=5)
-write.csv(d, './csv/general_ledger.csv', row.names=FALSE)
+
+wb$ledger <- d
+
+# add some dateshifting
+
+d <- wb$ledger
+
+shift_tid <- sample(d$tid, 10)
+original_date <- d$date[match(shift_tid, d$tid)]
+presentation_date <- as.Date(as.numeric(as.Date("2001-01-01")) + round(rnorm(length(original_date), 0, 1000)), origin="1970-01-01")
+
+date_shifts <- data.frame(tid=shift_tid, original_date, presentation_date)
+wb$dates <- date_shifts 
+
+
+# add some currency conversion
+
+exchange_rates <- data.frame(date=character(), 
+  denominator=character(), numerator=character(), price=character())
+
+ex_dates <- c("1999-01-01", "2000-01-01", "2001-01-01")
+denom <- c("eur", "eur", "eur")
+num <- c("yen", "yen", "yen")
+price <- c("110", "130", "150")
+
+ex <- data.frame(date=ex_dates, denominator=denom, numerator=num, price=price)
+
+wb$exchange <- ex
+
+
+#####
+
+
+dir_init('./csv')
+save_workbook(wb)
+
+
+
+##################
 
 
 dir_init("./primary_sources")
@@ -70,36 +107,6 @@ my_filename <- id_maker(1, nchar=5)
 my_filename <- paste0(my_filename, ".csv")
 
 write.csv(d, file.path('./primary_sources', my_filename), row.names=FALSE)
-
-
-
-# add some dateshifting
-
-d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-
-shift_tid <- sample(d$tid, 10)
-original_date <- d$date[match(shift_tid, d$tid)]
-presentation_date <- as.Date(as.numeric(as.Date("2001-01-01")) + round(rnorm(length(original_date), 0, 1000)), origin="1970-01-01")
-
-date_shifts <- data.frame(tid=shift_tid, original_date, presentation_date)
-write.csv(date_shifts, "./csv/date_shifts.csv", row.names=FALSE)
-
-
-# add some currency conversion
-
-exchange_rates <- data.frame(date=character(), 
-  denominator=character(), numerator=character(), price=character())
-
-ex_dates <- c("1999-01-01", "2000-01-01", "2001-01-01")
-denom <- c("eur", "eur", "eur")
-num <- c("yen", "yen", "yen")
-price <- c("110", "130", "150")
-
-ex <- data.frame(date=ex_dates, denominator=denom, numerator=num, price=price)
-
-write.csv(ex, "./csv/exchange_rates.csv", row.names=FALSE)
-
-
 
 # and some multi-currency transactions!
 
@@ -140,16 +147,30 @@ write.csv(d, file.path('./primary_sources', my_filename), row.names=FALSE)
 
 ##############
 
+wb <- load_workbook(".")
 
-ledgr::absorb_entries()
-# im really gonna need a timestamp...hmmm...
+inputs <- list.files("./primary_sources", pattern="*.csv", full.names=TRUE)
+
+add <- data.frame(date=character(), 
+amount=character(),  tag=character(), notes=character(), 
+account=character(), currency=character(), checksum=character(), 
+tid=character(), balance=character()) 
+
+if(length(inputs)>0){
+  for(i in 1:length(inputs)){
+    add <- rbind(add, read.csv(inputs[i], stringsAsFactors=FALSE))
+  }
+}
+
 
 test_that("test entries are absorbed", {
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=TRUE)
-  expect_true(all(c("test_one", "test_two", "test_three") %in% d$tid))
+  test <- ledgr::absorb_entries(wb$ledger, add)
+  expect_true(all(c("test_one", "test_two", "test_three") %in% test$tid))
 
 })
+
+wb$ledger <- ledgr::absorb_entries(wb$ledger, add)
 
 
 # unit test: try to exchange currencies that have no pairings
@@ -157,15 +178,15 @@ test_that("test entries are absorbed", {
 
 test_that("exchange rates fail if not formatted", {
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
+  xe <- wb$exchange
 
   expect_error(exchange(d, xe, "eur"))
 
   expect_true( length(unique(d$currency))==2 )
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  # d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
+  # xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
 
 #   expect_error(exchange(d, xe, "yen"))
   # needs more testing....
@@ -173,19 +194,17 @@ test_that("exchange rates fail if not formatted", {
 })
 
 
-ledgr::format_exchange_rates()
+wb$exchange <- ledgr::format_exchange_rates(wb$exchange)
 
 test_that("exchange rates go both directions", {
-  ex <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  ex <- wb$exchange
   expect_true(all(table(ex$date)==2))
 })
 
-
-
 test_that("exchange rates work once formatted", {
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
+  xe <- wb$exchange
 
   d <- exchange(d, xe, "eur") 
   # needs more testing....
@@ -195,8 +214,8 @@ test_that("exchange rates work once formatted", {
   expect_true( abs(sum(d$amount[d$tid=="test_two"])/d$amount[d$tid=="test_two"][1]) < 0.3 )
   expect_true( abs(sum(d$amount[d$tid=="test_three"])/d$amount[d$tid=="test_three"][1]) < 0.3 )
 
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
+  xe <- wb$exchange
 
   d <- exchange(d, xe, "yen") 
   # needs more testing....
@@ -208,70 +227,18 @@ test_that("exchange rates work once formatted", {
 
 })
 
+wb$accounts <- summarize_accounts(wb)
 
-
-
-
-ledgr::summarize_accounts() 
-
-
-ledgr::audit_accounts()
-
-
-ledgr::balance_accounts()
+wb$ledger <- balance_accounts(wb)
 
 test_that("accounts balance", {
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  xe <- read.csv('./csv/exchange_rates.csv', stringsAsFactors=FALSE)
+  d <- wb$ledger
+  xe <- wb$exchange
   d <- exchange(d, xe, 'eur')
   expect_true(abs(sum(d$amount)) < 100) # lame
 })
 
 
-ledgr::seperate_accounts()
-
-test_that("all valid accounts were seperated", {
-
-  d <- read.csv('./csv/general_ledger.csv', stringsAsFactors=FALSE)
-  account_list <- sort(unique(c(d$account, d$tag)))
-  account_files <- list.files('./csv', pattern="^account_", full.names=TRUE)
-  expect_equal( length(account_list), length(account_files) )
-
-})
-
-ledgr::merge_accounts()
-# eliminates all NA's..not good!
-
-# ledgr::audit_accounts() 
-
-
-
-# every function has to have a path...or it works with the files in memory perhaps?
-
-# generate some multi=currency transactions with a fixed ratio
-# that goes into the time no problemo
-
-# note: currently requires an entry in the accounts list first!
-# good design IMO b/c wont make a random file with bad account name
-
-ledgr::prepare_journal()
-
-ledgr::prepare_reports()
-
-# add a 'depth' flag so you can reduce subaccounts easily
-
-# also "data" instead of csv for every path
-
-# incorporate date_shift in the report prep
-# incorporate currency exchange in report prep
-
-# specify output format for easy access
-# 1. csv tables
-# 2. latex
-# 3. csv tables bound together into an XLS file
-# 4. some kind of rmarkdown script?
-
-# readxl
 
 setwd('..')
 
