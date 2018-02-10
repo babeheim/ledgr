@@ -48,7 +48,7 @@ save_workbook <- function(wb){
   write.csv(wb$dates, "./csv/date_shifts.csv", row.names=FALSE)
   write.csv(wb$exchange, "./csv/exchange_rates.csv", row.names=FALSE)
   if("journal" %in% names(wb)) write.csv(wb$journal, "./csv/journal.csv", row.names=FALSE)
-  if("accounts" %in% names(wb)) write.csv(wb$accounts.csv, "./csv/accounts.csv", row.names=FALSE)
+  if("accounts" %in% names(wb)) write.csv(wb$accounts, "./csv/accounts.csv", row.names=FALSE)
 
   return("workbook saved to disk")
 
@@ -235,9 +235,9 @@ prepare_reports <- function(wb, account_depth=2, currency="eur"){
 }
 
 
-absorb_entries <- function(ledger, add){
+absorb_entries <- function(wb, add){
 
-  d <- ledger
+  d <- wb$ledger
 
   # detect if entries are not present in the general ledger, timestamp and amount!
   # do we require that the tags be completed on the primary sources? no!
