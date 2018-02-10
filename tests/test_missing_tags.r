@@ -1,9 +1,8 @@
 
-library(devtools)
-devtools::load_all()
+# library(devtools)
+# devtools::load_all()
 # install_github("babeheim/ledgr")
 
-library(ledgr)
 
 dir_init('./missing_tags')
 setwd('./missing_tags')

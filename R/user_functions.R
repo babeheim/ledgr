@@ -1,7 +1,4 @@
 
-# balance transactiosn shoudl fail if any are NA
-
-
 init_workbook <- function(){
   
   dates <- data.frame(tid=character(), 
@@ -46,6 +43,7 @@ load_workbook <- function(path){
 
 save_workbook <- function(wb){
 
+  dir_init("./csv")
   write.csv(wb$ledger, "./csv/general_ledger.csv", row.names=FALSE)
   write.csv(wb$dates, "./csv/date_shifts.csv", row.names=FALSE)
   write.csv(wb$exchange, "./csv/exchange_rates.csv", row.names=FALSE)
@@ -101,35 +99,6 @@ audit_accounts <- function(wb){
 
 }
 
-scrub_text <- function(input_string){
-  d <- input_string
-  d <- iconv(d, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
-  # pgn_tag <- stringi::stri_trans_general(pgn_tag, "latin-ascii") # convert non-ASCII to closest ascii
-  d <- gsub("[\x01-\x1F]", "", d) # takes care of non-printing ASCII
-  return(d)
-}
-
-
-truncate_accounts <- function(string, level=NA){
-  output <- string
-  output[is.na(output)] <- ''
-  for(i in 1:length(string)){
-      break_pos <- gregexpr(':', output[i])[[1]]
-      if(!is.na(break_pos[level]) & break_pos[level]!='-1') output[i] <- substr(output[i], 1, break_pos[level]-1) 
-  }
-  return(output)
-}
-
-
-shift_dates <- function(journal, dateshift){
-  dateshift$original_date <- fix_dates(dateshift$original_date)
-  dateshift$presentation_date <- fix_dates(dateshift$presentation_date)
-  shift_tar <- which(journal$tid %in% dateshift$tid)
-  if(length(shift_tar)>0){
-    journal$date[shift_tar] <- as.character(dateshift$presentation_date[match(journal$tid[shift_tar], dateshift$tid)])
-  }    
-  return(journal)
-}
 
 prepare_reports <- function(wb, account_depth=2, currency="eur"){
   
@@ -295,96 +264,6 @@ absorb_entries <- function(ledger, add){
 }
 
 
-# can be used for flows or balances depending on what you pass in
-sum_amounts <- function(journal, start_date=NA, stop_date=NA, accounts=NA){
-  d <- journal
-  if(is.na(start_date)) start_date <- min(d$date)
-  if(is.na(stop_date)) stop_date <- max(d$date)
-  if(all(is.na(accounts))) accounts <- sort(unique(d$account))
-  tar <- which(d$date >= start_date & d$date <= stop_date & d$account %in% accounts)
-  output <- 0
-  if(length(tar)>0) output <- sum(d$amount[tar])
-  output <- round(output, 2)
-  return(output)
-}
-
-
-
-texttab <- function(input.matrix, alignment=NA, hlines=NA, caption="", scale=NA){
-  output <- character(nrow(input.matrix))
-  for(i in 1:nrow(input.matrix)){
-    add.amps <- paste(input.matrix[i,], collapse=" & ")
-    output[i] <- paste(add.amps, "\\\\", sep=" ")
-  }
-  if(all(!is.na(hlines))){
-    for(i in 1:length(hlines)) output <- append(output, "\\hline", hlines[i]+(i-1))
-  }
-  return(output)
-}
-
-fix_dates <- function(dates){
-  if(length(grep('/', dates))>0){
-    last_four <- substr(dates, nchar(dates)-3, nchar(dates))
-    lower_y <- grep('/', last_four)
-    upper_y <- which(!1:length(dates) %in% lower_y)
-    if(length(upper_y)>0) dates[upper_y] <- as.character(as.Date(dates[upper_y], '%m/%d/%Y'))
-    if(length(lower_y)>0) dates[lower_y] <- as.character(as.Date(dates[lower_y], '%m/%d/%y'))
-  }
-  dates <- as.Date(dates)
-  return(dates)
-}
-
-format_exchange_rates <- function(ex){
- # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
-  if(nrow(ex) > 0){
-
-    ex$date <- fix_dates(ex$date)
-    ex$price <- as.numeric(ex$price)
-
-    ex2 <- ex
-    ex2$denominator <- ex$numerator
-    ex2$numerator <- ex$denominator
-    ex2$price <- 1/ex$price
-
-    ex <- rbind(ex, ex2)
-
-    ex$price <- round(ex$price, 4)
-
-    o <- rev(order(ex$date))
-    ex <- ex[o,]
-
-    drop <- which(duplicated(ex[,c("denominator", "numerator", "date")]))
-    if(length(drop)>0) ex <- ex[-drop,]
-
-    return(ex)
-
-  }
-
-}
-
-
-exchange <- function(journal, prices, out_currency){
-  journal$date <- fix_dates(journal$date)
-  prices$date <- fix_dates(prices$date)
-  for(i in 1:nrow(journal)){
-    if(journal$currency[i]!=out_currency & !is.na(journal$date[i])){
-      ex_rows <- which(prices$denominator==journal$currency[i] & prices$numerator==out_currency)
-      if(length(ex_rows)>0){
-        ex_dates <- prices$date[ex_rows]
-        diffs <- abs(journal$date[i] - ex_dates)
-        best_row <- ex_rows[which.min(diffs)]
-        if(diffs[which.min(diffs)] > 365) warning(paste0("transaction ", journal$tid[i], " does not have a recent exchange rate"))
-        journal$amount[i] <- prices$price[best_row]*journal$amount[i]
-        journal$currency[i] <- paste0(out_currency,'-eqv')
-      } else {
-        stop( paste(journal$currency[i], "and", out_currency, "have no pairing
-          in the exchange rate table") ) 
-      }
-    }
-  } 
-  return(journal)
-}
-
 
 prepare_journal <- function(wb){
 
@@ -517,75 +396,32 @@ summarize_accounts <- function(wb){
 
 }
 
-# seperate_accounts <- function(){
-#   # key element: only accounts in the 'accounts' column get counted
-#   # should have a force flag and detects if postings are alreayd in these accounts
-#   # that are not in the general ledger
-#   d <- read.csv("./csv/general_ledger.csv", stringsAsFactors=FALSE)
-#   a <- read.csv("./csv/accounts.csv", stringsAsFactors=FALSE)
-#   if(!all(d$accounts %in% a$account)) stop("not all ledger accounts are in the account list") # check
-#   account_names <- paste0("account_", a$account, ".csv")
-#   account_names <- gsub(":", "_", account_names)
-#   account_names <- file.path("./csv", account_names)
-#   for(i in 1:length(account_names)){
-#     tar <- which(d$account==a$account[i])
-#     write.csv(d[tar,], account_names[i], row.names=FALSE)
-#   }
-# }
-
-# merge_accounts <- function(){
-#   # should have a force flag and detects if postings are in gl not in account ledgers
-#   account_tables <- list.files("./csv", pattern="^account_", full.names=TRUE)
-#   if(length(account_tables)>0){
-#     output <- read.csv(account_tables[1], stringsAsFactors=FALSE)
-#     for(i in 2:length(account_tables)) output <- rbind( output, read.csv(account_tables[i], stringsAsFactors=FALSE) )
-#     output$date <- fix_dates(output$date)
-#     o <- rev(order(output$date))
-#     output <- output[o,]
-#     file.remove(account_tables)
-#     write.csv(output, "./csv/general_ledger.csv", row.names=FALSE)
-#     } else {
-#       stop("account tables have not been created; try running seperate_accounts first")
-#     }
-# }
 
 
+format_exchange_rates <- function(ex){
+ # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
+  if(nrow(ex) > 0){
 
-id_maker <- function(n, reserved='', seed=NA, nchars=NA){
-  my_let <- letters 
-  my_num <- 0:9 
-  if(is.na(seed) | !is.numeric(seed)) set.seed(as.numeric(as.POSIXlt(Sys.time())))
-  if(!is.na(seed) & is.numeric(seed)) set.seed(seed)
-  output <- replicate(n, paste(sample(c(my_let, my_num), nchars, replace=TRUE), 
-    collapse=''))
-  rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
-  while(any(rejected)){
-    output <- output[-which(rejected)]
-    remaining <- n-length(output)
-    output <- c(output, replicate(remaining, paste(sample(c(my_let, my_num), nchars, 
-      replace=TRUE), collapse='')))
-    rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+    ex$date <- fix_dates(ex$date)
+    ex$price <- as.numeric(ex$price)
+
+    ex2 <- ex
+    ex2$denominator <- ex$numerator
+    ex2$numerator <- ex$denominator
+    ex2$price <- 1/ex$price
+
+    ex <- rbind(ex, ex2)
+
+    ex$price <- round(ex$price, 4)
+
+    o <- rev(order(ex$date))
+    ex <- ex[o,]
+
+    drop <- which(duplicated(ex[,c("denominator", "numerator", "date")]))
+    if(length(drop)>0) ex <- ex[-drop,]
+
+    return(ex)
+
   }
-  output
-}
 
-dir_init <- function(path, verbose=FALSE, overwrite=TRUE){
-  if(substr(path, 1, 2)!='./') stop('path argument must be formatted
-    with "./" at beginning')
-  contents <- dir(path, recursive=TRUE)
-  if(dir.exists(path)){
-    if(overwrite){
-      if(verbose){
-        if(length(contents)==0) print(paste('folder ', path, ' created.', sep=""))
-        if(length(contents)>0) print(paste('folder ', path, ' wiped of ', length(contents), ' files/folders.', sep=""))
-      }
-      if(dir.exists(path)) unlink(path, recursive=TRUE)
-      dir.create(path)
-    }
-  } else {
-    if(verbose){
-      print(paste('folder ', path, ' created.', sep=""))
-    }
-    dir.create(path)
-  }
 }
