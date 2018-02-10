@@ -13,6 +13,10 @@ prepare_excel <- function(){
   my_files <- list.files("./reports", pattern="*.csv", full.names=TRUE)
   my_filenames <- list.files("./reports", pattern="*.csv", full.names=FALSE)
   my_filenames <- gsub(".csv", "", my_filenames)
+
+  my_filenames <- rev(my_filenames)
+  my_files <- rev(my_files)
+
   output <- list()
   for(i in 1:length(my_files)) output[[i]] <- read.csv(my_files[i], stringsAsFactors=FALSE)
   names(output) <- my_filenames
