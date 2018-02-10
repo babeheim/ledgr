@@ -100,7 +100,7 @@ audit_accounts <- function(wb){
 }
 
 
-prepare_reports <- function(wb, account_depth=2, currency="eur"){
+prepare_reports <- function(wb, account_depth = 2, currency="eur"){
   
   if(!"accounts" %in% names(wb)) stop("accounts table has not been created; run summarize_accounts first")
   if(!"journal" %in% names(wb)) stop("journal table has not been created; run prepare_journal first")
@@ -232,27 +232,11 @@ prepare_reports <- function(wb, account_depth=2, currency="eur"){
     write.csv(out, my_name, row.names=TRUE)
   }
 
-}
-
-library(openxlsx)
-
-
-prepare_excel <- function(){
-
-  my_files <- list.files("./reports", pattern="*.csv", full.names=TRUE)
-  my_filenames <- list.files("./reports", pattern="*.csv", full.names=FALSE)
-  my_filenames <- gsub(".csv", "", my_filenames)
-
-  output <- list()
-  for(i in 1:length(my_files)) output[[i]] <- read.csv(my_files[i], stringsAsFactors=FALSE)
-  names(output) <- my_filenames
-
-  date <- gsub("-", "", substr(Sys.time(), 1, 10))
-  names <- paste0("family_finances_", date,".xlsx")
-
-  write.xlsx(output, file.path("./reports", names), colWidths = "auto")
+  prepare_excel()
 
 }
+
+
 
 
 absorb_entries <- function(wb, add){

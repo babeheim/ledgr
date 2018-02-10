@@ -9,13 +9,25 @@ scrub_text <- function(input_string){
   return(d)
 }
 
+prepare_excel <- function(){
+  my_files <- list.files("./reports", pattern="*.csv", full.names=TRUE)
+  my_filenames <- list.files("./reports", pattern="*.csv", full.names=FALSE)
+  my_filenames <- gsub(".csv", "", my_filenames)
+  output <- list()
+  for(i in 1:length(my_files)) output[[i]] <- read.csv(my_files[i], stringsAsFactors=FALSE)
+  names(output) <- my_filenames
+  date <- gsub("-", "", substr(Sys.time(), 1, 10))
+  names <- paste0("account_overview_", date,".xlsx")
+  write.xlsx(output, file.path("./reports", names), colWidths = "auto")
+}
 
-truncate_accounts <- function(string, level=NA){
+truncate_accounts <- function(string, level = 2){
+  string <- as.character(string)
   output <- string
   output[is.na(output)] <- ''
   for(i in 1:length(string)){
-      break_pos <- gregexpr(':', output[i])[[1]]
-      if(!is.na(break_pos[level]) & break_pos[level]!='-1') output[i] <- substr(output[i], 1, break_pos[level]-1) 
+    break_pos <- gregexpr(':', output[i])[[1]]
+    if(!is.na(break_pos[level]) & break_pos[level] != '-1') output[i] <- substr(output[i], 1, break_pos[level]-1)
   }
   return(output)
 }
@@ -70,7 +82,6 @@ fix_dates <- function(dates){
   dates <- as.Date(dates)
   return(dates)
 }
-
 
 exchange <- function(journal, prices, out_currency){
   journal$date <- fix_dates(journal$date)

@@ -20,7 +20,7 @@ general_ledger <- data.frame(date=character(),
   account=character(), currency=character(), checksum=character(), 
   tid=character(), balance=character())
 d <- general_ledger
-n_trans <- 10000
+n_trans <- 100
 add <- matrix(NA, nrow=n_trans, ncol=ncol(d))
 colnames(add) <- colnames(d)
 d <- rbind(d, add)
