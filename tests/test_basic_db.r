@@ -20,7 +20,7 @@ general_ledger <- data.frame(date=character(),
   account=character(), currency=character(), checksum=character(), 
   tid=character(), balance=character())
 d <- general_ledger
-n_trans <- 100
+n_trans <- 10000
 add <- matrix(NA, nrow=n_trans, ncol=ncol(d))
 colnames(add) <- colnames(d)
 d <- rbind(d, add)
@@ -72,10 +72,7 @@ wb$exchange <- ex
 
 dir_init('./csv')
 
-write.csv(wb$exchange, "./csv/exchange_rates.csv", row.names=FALSE)
-write.csv(wb$ledger, "./csv/general_ledger.csv", row.names=FALSE)
-write.csv(wb$dates, "./csv/date_shifts.csv", row.names=FALSE)
-
+save_workbook(wb)
 
 
 
@@ -242,8 +239,6 @@ wb$exchange <- ledgr::format_exchange_rates(ex)
 
 test_that("test entries are absorbed", {
 
-  d <- wb$ledger
-
   inputs <- list.files("./primary_sources", pattern="*.csv", full.names=TRUE)
 
   add <- data.frame(date=character(), 
@@ -257,7 +252,7 @@ test_that("test entries are absorbed", {
     }
   }
 
-  test <- ledgr::absorb_entries(d, add)
+  test <- ledgr::absorb_entries(wb, add)
   expect_true(all(c("test_one", "test_two", "test_three") %in% test$tid))
 
 })

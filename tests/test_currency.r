@@ -165,12 +165,12 @@ if(length(inputs)>0){
 
 test_that("test entries are absorbed", {
 
-  test <- ledgr::absorb_entries(wb$ledger, add)
+  test <- ledgr::absorb_entries(wb, add)
   expect_true(all(c("test_one", "test_two", "test_three") %in% test$tid))
 
 })
 
-wb$ledger <- ledgr::absorb_entries(wb$ledger, add)
+wb$ledger <- ledgr::absorb_entries(wb, add)
 
 
 # unit test: try to exchange currencies that have no pairings
@@ -238,6 +238,10 @@ test_that("accounts balance", {
   expect_true(abs(sum(d$amount)) < 100) # lame
 })
 
+wb$accounts <- ledgr::summarize_accounts(wb) 
+wb$journal <- ledgr::prepare_journal(wb)
+
+ledgr::prepare_reports(wb)
 
 
 setwd('..')

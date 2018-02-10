@@ -125,8 +125,6 @@ wb$exchange <- ledgr::format_exchange_rates(ex)
 
 test_that("test entries are absorbed with issues", {
 
-  d <- wb$ledger
-
   inputs <- list.files("./primary_sources", pattern="*.csv", full.names=TRUE)
 
   add <- data.frame(date=character(), 
@@ -140,7 +138,7 @@ test_that("test entries are absorbed with issues", {
     }
   }
 
-  expect_warning(test <- ledgr::absorb_entries(d, add))
+  expect_warning(test <- ledgr::absorb_entries(wb, add))
 
 })
 
@@ -157,6 +155,26 @@ test_that("balancing fails with missing tags balance", {
   wb$ledger$tag[bad] <- NA
   expect_error(test <- ledgr::balance_accounts(wb))
 })
+
+
+inputs <- list.files("./primary_sources", pattern="*.csv", full.names=TRUE)
+
+add <- data.frame(date=character(), 
+amount=character(),  tag=character(), notes=character(), 
+account=character(), currency=character(), checksum=character(), 
+tid=character(), balance=character()) 
+
+if(length(inputs)>0){
+  for(i in 1:length(inputs)){
+    add <- rbind(add, read.csv(inputs[i], stringsAsFactors=FALSE))
+  }
+}
+
+wb$accounts <- ledgr::summarize_accounts(wb) 
+wb$journal <- ledgr::prepare_journal(wb)
+
+ledgr::prepare_reports(wb)
+
 
 
 setwd('..')
