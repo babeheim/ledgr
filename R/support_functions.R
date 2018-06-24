@@ -10,19 +10,35 @@ scrub_text <- function(input_string){
 }
 
 prepare_excel <- function(){
-  my_files <- list.files("./reports", pattern="*.csv", full.names=TRUE)
-  my_filenames <- list.files("./reports", pattern="*.csv", full.names=FALSE)
-  my_filenames <- gsub(".csv", "", my_filenames)
+ 
+  account_balances <- list()
+  my_files <- list.files("./reports", pattern = "^account_balances_monthly*", full.names = TRUE)
+  my_filenames <- list.files("./reports", pattern = "^account_balances_monthly*", full.names = FALSE)
+  my_filenames <- paste("account balances", substr(my_filenames, 26, 29))
+  for(i in 1:length(my_files)) account_balances[[i]] <- read.csv(my_files[i], stringsAsFactors = FALSE)
+  names(account_balances) <- my_filenames
 
-  my_filenames <- rev(my_filenames)
-  my_files <- rev(my_files)
+  income_expenses <- list()
+  my_files <- list.files("./reports", pattern = "^income_expenses_monthly*", full.names = TRUE)
+  my_filenames <- list.files("./reports", pattern = "^income_expenses_monthly*", full.names = FALSE)
+  my_filenames <- paste("income expense", substr(my_filenames, 25, 28))
+  for(i in 1:length(my_files)) income_expenses[[i]] <- read.csv(my_files[i], stringsAsFactors = FALSE)
+  names(income_expenses) <- my_filenames
 
-  output <- list()
-  for(i in 1:length(my_files)) output[[i]] <- read.csv(my_files[i], stringsAsFactors=FALSE)
-  names(output) <- my_filenames
+  output <- list(
+    accounts = read.csv("./csv/accounts.csv", stringsAsFactors = FALSE),
+    `general ledger` = read.csv("./csv/general_ledger.csv", stringsAsFactors = FALSE),
+    `income expense annual` = read.csv("./reports/income_expense_annual.csv", stringsAsFactors = FALSE),
+    `account balances annual` = read.csv("./reports/account_balances_annual.csv", stringsAsFactors = FALSE)
+  )
+
+  output <- c(output, income_expenses, account_balances)
+ 
   date <- gsub("-", "", substr(Sys.time(), 1, 10))
   names <- paste0("account_overview_", date,".xlsx")
+
   write.xlsx(output, file.path("./reports", names), colWidths = "auto")
+
 }
 
 truncate_accounts <- function(string, level = 2){
