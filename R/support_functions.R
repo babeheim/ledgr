@@ -106,6 +106,9 @@ fix_dates <- function(dates){
 exchange <- function(journal, prices, out_currency){
   journal$date <- fix_dates(journal$date)
   prices$date <- fix_dates(prices$date)
+  prices2 <- select(prices, date = date, numerator = denominator, denominator = numerator, price = price)
+  prices2$price <- 1 / prices2$price
+  prices <- rbind(prices, prices2)
   for(i in 1:nrow(journal)){
     if(journal$currency[i]!=out_currency & !is.na(journal$date[i])){
       ex_rows <- which(prices$denominator==journal$currency[i] & prices$numerator==out_currency)

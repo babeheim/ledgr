@@ -244,37 +244,26 @@ prepare_reports <- function(wb, account_depth = 2, currency="eur"){
 }
 
 
-
-
-absorb_entries <- function(wb, add){
-
-  if(class(wb) != "list" | !"ledger" %in% names(wb)) stop("first argument is not a valid ledgr workbook")
-  d <- wb$ledger
-
-  # detect if entries are not present in the general ledger, timestamp and amount!
-  # do we require that the tags be completed on the primary sources? no!
-
-  # double entry requires a source/destination in all records at all times
-  drop <- which(is.na(add$tag) | is.na(add$date) | is.na(add$amount) | is.na(add$account))
-  if(length(drop)>0){
-    warning( paste0( length(drop), " records were ignored due to incomplete information (e.g. tagging)") )
-    add <- add[-drop,]
-  }
-
-  ledger_key <- paste(d$date, d$amount, d$account, d$tag)
-  add_key <- paste(add$date, add$amount, add$account, add$tag)
-
-  keep <- which(!add_key %in% ledger_key)
-
-  if(length(keep)>0){
-    d <- rbind(d, add[keep,])
-    o <- order(d$date)
-    d <- d[o,]
-    return(d)
-  }
-
+absorb_entries <- function (wb, add) {
+    if (class(wb) != "list" | !"ledger" %in% names(wb)) 
+        stop("first argument is not a valid ledgr workbook")
+    d <- wb$ledger
+    drop <- which(is.na(add$tag) | is.na(add$date) | is.na(add$amount) | 
+        is.na(add$account))
+    if (length(drop) > 0) {
+        warning(paste0(length(drop), " records were ignored due to incomplete information (e.g. tagging)"))
+        add <- add[-drop, ]
+    }
+    ledger_key <- paste(d$date, d$amount, d$account)
+    add_key <- paste(add$date, add$amount, add$account)
+    keep <- which(!add_key %in% ledger_key)
+    if (length(keep) > 0) {
+        d <- rbind(d, add[keep, ])
+        o <- order(d$date)
+        d <- d[o, ]
+        return(d)
+    }
 }
-
 
 
 prepare_journal <- function(wb){
@@ -372,42 +361,34 @@ balance_accounts <- function(wb){
 }
 
 
-summarize_accounts <- function(wb){
+summarize_accounts <- function (wb, currency = "eur") 
+{
+    d <- wb$ledger
+    xe <- wb$exchange
+    d <- exchange(d, xe, currency)
 
-  d <- wb$ledger
-
-  d$date <- fix_dates(d$date)
-
-  account_list <- sort(unique(c(d$account, d$tag))) # alphabetical order
-
-  d$amount <- as.numeric(d$amount)
-
-  n_postings <- rep(NA, length(account_list))
-  start_date <- rep(NA, length(account_list))
-  last_date <- rep(NA, length(account_list))
-  net_flow <- rep(NA, length(account_list))
-  n_checksums <- rep(NA, length(account_list))
-
-  for(i in 1:length(account_list)){
-
-    involved <- which(d$account == account_list[i] | d$tag==account_list[i])
-    n_postings[i] <- length(involved)
-    start_date[i] <- min(d$date[involved])
-    last_date[i] <- min(d$date[involved])
-    net_flow[i] <- round(sum(d$amount[involved]), 2)
-    n_checksums[i] <- sum(!is.na(d$checksum[d$account==account_list[i]]))
-
-  }
-
-  # also count how many other accounts these accounts share a tid with...hmmm
-
-  output <- data.frame(account=account_list, n_postings, start_date, 
-  last_date, net_flow, n_checksums)
- 
-  return(output)
-
+    d$date <- fix_dates(d$date)
+    account_list <- sort(unique(c(d$account, d$tag)))
+    d$amount <- as.numeric(d$amount)
+    n_postings <- rep(NA, length(account_list))
+    start_date <- rep(NA, length(account_list))
+    last_date <- rep(NA, length(account_list))
+    net_flow <- rep(NA, length(account_list))
+    n_checksums <- rep(NA, length(account_list))
+    for (i in 1:length(account_list)) {
+        involved <- which(d$account == account_list[i] | d$tag == 
+            account_list[i])
+        n_postings[i] <- length(involved)
+        start_date[i] <- as.character(min(d$date[involved]))
+        last_date[i] <- as.character(max(d$date[involved]))
+        net_flow[i] <- round(sum(d$amount[involved]), 2)
+        n_checksums[i] <- sum(!is.na(d$checksum[d$account == 
+            account_list[i]]))
+    }
+    output <- data.frame(account = account_list, n_postings, 
+        start_date, last_date, net_flow, currency, n_checksums)
+    return(output)
 }
-
 
 
 format_exchange_rates <- function(ex){
