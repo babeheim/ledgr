@@ -1,4 +1,145 @@
 
+
+extract_journal <- function (journal, path) {
+
+  journal[is.na(journal)] <- "null"
+
+  posting <- 
+  "- date     : \"$DATE$\"
+  notes    : \"$NOTES$\"
+  amount   : \"$AMOUNT$\"
+  currency : \"$CURRENCY$\"
+  checksum : \"$CHECKSUM$\"
+  balance  : \"$BALANCE$\"
+  tid      : \"$TID$\"
+  account  : \"$ACCOUNT$\"
+  tag      : \"$TAG$\""
+
+  output <- character()
+
+  for(i in 1:nrow(journal)){
+
+    add_text <- posting
+    add_text <- gsub("\\$DATE\\$", journal$date[i], add_text)
+    add_text <- gsub("\\$NOTES\\$", journal$notes[i], add_text)
+    add_text <- gsub("\\$AMOUNT\\$", journal$amount[i], add_text)
+    add_text <- gsub("\\$CURRENCY\\$", journal$currency[i], add_text)
+    add_text <- gsub("\\$CHECKSUM\\$", journal$checksum[i], add_text)
+    add_text <- gsub("\\$BALANCE\\$", journal$balance[i], add_text)
+    add_text <- gsub("\\$TID\\$", journal$tid[i], add_text)
+    add_text <- gsub("\\$ACCOUNT\\$", journal$account[i], add_text)
+    add_text <- gsub("\\$TAG\\$", journal$tag[i], add_text)
+
+    output <- c(output, "", add_text)
+
+  }
+
+  print(paste("exported", nrow(journal), "entries"))
+
+  writeLines(output, path)
+
+}
+
+
+
+extract_exchanges <- function (xe, path) {
+
+  xe[is.na(xe)] <- "null"
+
+  posting <- 
+  "- date        : \"$DATE$\"
+  numerator   : \"$NUMERATOR$\"
+  denominator  : \"$DENOMINATOR$\"
+  price       : \"$PRICE$\""
+
+  output <- character()
+
+  for(i in 1:nrow(xe)){
+
+    add_text <- posting
+    add_text <- gsub("\\$DATE\\$", xe$date[i], add_text)
+    add_text <- gsub("\\$NUMERATOR\\$", xe$numerator[i], add_text)
+    add_text <- gsub("\\$DENOMINATOR\\$", xe$denominator[i], add_text)
+    add_text <- gsub("\\$PRICE\\$", xe$price[i], add_text)
+
+    output <- c(output, "", add_text)
+
+  }
+
+  print(paste("exported", nrow(xe), "entries"))
+
+  writeLines(output, path)
+
+}
+
+
+extract_dateshifts <- function (df, path) {
+
+  df[is.na(df)] <- "null"
+
+  posting <- 
+  "- tid                : \"$TID$\"
+  original_date      : \"$ORIGINAL$\"
+  presentation_date  : \"$PRESENTATION$\""
+
+  output <- character()
+
+  for(i in 1:nrow(df)){
+
+    add_text <- posting
+    add_text <- gsub("\\$TID\\$", df$tid[i], add_text)
+    add_text <- gsub("\\$ORIGINAL\\$", df$original_date[i], add_text)
+    add_text <- gsub("\\$PRESENTATION\\$", df$presentation_date[i], add_text)
+
+    output <- c(output, "", add_text)
+
+  }
+
+  print(paste("exported", nrow(df), "entries"))
+
+  writeLines(output, path)
+
+}
+
+
+
+
+extract_accounts <- function (df, path) {
+
+  df[is.na(df)] <- "null"
+
+  posting <- 
+  "- account      : \"$ACCOUNT$\"
+  n_postings   : \"$NPOSTINGS$\"
+  start_date   : \"$STARTDATE$\"
+  last_date    : \"$LASTDATE$\"
+  net_flow     : \"$NETFLOW$\"
+  currency     : \"$CURRENCY$\"
+  n_checksums  : \"$NCHECKSUMS$\""
+
+  output <- character()
+
+  for(i in 1:nrow(df)){
+
+    add_text <- posting
+    add_text <- gsub("\\$ACCOUNT\\$", df$account[i], add_text)
+    add_text <- gsub("\\$NPOSTINGS\\$", df$n_postings[i], add_text)
+    add_text <- gsub("\\$STARTDATE\\$", df$start_date[i], add_text)
+    add_text <- gsub("\\$LASTDATE\\$", df$last_date[i], add_text)
+    add_text <- gsub("\\$NETFLOW\\$", df$net_flow[i], add_text)
+    add_text <- gsub("\\$CURRENCY\\$", df$currency[i], add_text)
+    add_text <- gsub("\\$NCHECKSUMS\\$", df$n_checksums[i], add_text)
+
+    output <- c(output, "", add_text)
+
+  }
+
+  print(paste("exported", nrow(df), "entries"))
+
+  writeLines(output, path)
+
+}
+
 # balance transactiosn shoudl fail if any are NA
 
 scrub_text <- function(input_string){
@@ -9,7 +150,7 @@ scrub_text <- function(input_string){
   return(d)
 }
 
-prepare_excel <- function(){
+prepare_excel <- function(wb){
  
   account_balances <- list()
   my_files <- list.files("./reports", pattern = "^account_balances_monthly*", full.names = TRUE)
@@ -26,8 +167,8 @@ prepare_excel <- function(){
   names(income_expenses) <- my_filenames
 
   output <- list(
-    accounts = read.csv("./csv/accounts.csv", stringsAsFactors = FALSE),
-    `general ledger` = read.csv("./csv/general_ledger.csv", stringsAsFactors = FALSE),
+    accounts = wb$accounts,
+    `general ledger` = wb$ledger,
     `income expense annual` = read.csv("./reports/income_expense_annual.csv", stringsAsFactors = FALSE),
     `account balances annual` = read.csv("./reports/account_balances_annual.csv", stringsAsFactors = FALSE)
   )

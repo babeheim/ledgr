@@ -1,0 +1,7 @@
+"date","amount","tag","notes","account","currency","checksum","tid","balance"
+"1999-08-15",-100,"assets:petty_cash",NA,"assets:deutsche_bank","eur",NA,"test_one",NA
+"1999-08-15",105,"assets:deutsche_bank",NA,"assets:petty_cash","usd",NA,"test_one",NA
+"1999-10-01",-100,"assets:petty_cash",NA,"assets:deutsche_bank","eur",NA,"test_two",NA
+"1999-10-01",110,"assets:deutsche_bank",NA,"assets:petty_cash","usd",NA,"test_two",NA
+"2000-08-03",100,"assets:c1_360",NA,"assets:deutsche_bank","eur",NA,"test_three",NA
+"2000-08-03",-123,"assets:deutsche_bank",NA,"assets:c1_360","usd",NA,"test_three",NA

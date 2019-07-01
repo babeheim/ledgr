@@ -1,4 +1,23 @@
 
+
+
+adjust_tags <- function (patterns, tag, ledger) {
+  hits <- intersect(
+    unlist(lapply(patterns, function(z) grep(z, ledger$notes))),
+    which(ledger$tag == "expenses:misc")
+  )
+  if(length(hits) > 0) {
+    ledger$tag[hits] <- my_tag
+    hit_doubles <- which(ledger$account == "expenses:misc" & ledger$tid %in% ledger$tid[hits])
+    if(length(hit_doubles) > 0) ledger$account[hit_doubles] <- my_tag
+    print(paste(length(hits), "postings updated"))
+  } else {
+    print("no postings match these patterns")
+  }
+  return(ledger)
+}
+
+
 init_workbook <- function(){
   
   dates <- data.frame(tid=character(), 
@@ -41,14 +60,24 @@ load_workbook <- function(path){
 
 }
 
-save_workbook <- function(wb){
+save_workbook <- function(wb, format = "csv"){
 
-  dir_init("./csv")
-  write.csv(wb$ledger, "./csv/general_ledger.csv", row.names=FALSE)
-  write.csv(wb$dates, "./csv/date_shifts.csv", row.names=FALSE)
-  write.csv(wb$exchange, "./csv/exchange_rates.csv", row.names=FALSE)
-  if("journal" %in% names(wb)) write.csv(wb$journal, "./csv/journal.csv", row.names=FALSE)
-  if("accounts" %in% names(wb)) write.csv(wb$accounts, "./csv/accounts.csv", row.names=FALSE)
+  if (format == "csv") {
+    dir_init("./csv")
+    write.csv(wb$ledger, "./csv/general_ledger.csv", row.names=FALSE)
+    write.csv(wb$dates, "./csv/date_shifts.csv", row.names=FALSE)
+    write.csv(wb$exchange, "./csv/exchange_rates.csv", row.names=FALSE)
+    if("journal" %in% names(wb)) write.csv(wb$journal, "./csv/journal.csv", row.names=FALSE)
+    if("accounts" %in% names(wb)) write.csv(wb$accounts, "./csv/accounts.csv", row.names=FALSE)
+  }
+
+  if (format == "yaml") {
+    dir_init("./yaml")
+    extract_journal(wb$ledger, "./yaml/general_ledger.yaml")
+    extract_dateshifts(wb$dates, "./yaml/date_shifts.yaml")
+    extract_exchanges(wb$exchange, "./yaml/exchange_rates.yaml")
+    if("accounts" %in% names(wb)) extract_accounts(wb$accounts, "./yaml/accounts.yaml")
+  }
 
   return("workbook saved to disk")
 
@@ -101,7 +130,7 @@ audit_accounts <- function(wb){
 
 
 prepare_reports <- function(wb, account_depth = 2, currency="eur"){
-  
+
   if(!"accounts" %in% names(wb)) stop("accounts table has not been created; run summarize_accounts first")
   if(!"journal" %in% names(wb)) stop("journal table has not been created; run prepare_journal first")
 
@@ -239,7 +268,8 @@ prepare_reports <- function(wb, account_depth = 2, currency="eur"){
     write.csv(out, my_name, row.names=TRUE)
   }
 
-  prepare_excel()
+  # having populated the reports/ folder with csv's, now we create an xlsx
+  prepare_excel(wb)
 
 }
 
@@ -391,29 +421,29 @@ summarize_accounts <- function (wb, currency = "eur")
 }
 
 
-format_exchange_rates <- function(ex){
+format_exchange_rates <- function(xe){
  # takes every date-numerator-denominator pair, inverts price and switches drop dpulicates
-  if(nrow(ex) > 0){
+  if(nrow(xe) > 0){
 
-    ex$date <- fix_dates(ex$date)
-    ex$price <- as.numeric(ex$price)
+    xe$date <- fix_dates(xe$date)
+    xe$price <- as.numeric(xe$price)
 
-    ex2 <- ex
-    ex2$denominator <- ex$numerator
-    ex2$numerator <- ex$denominator
-    ex2$price <- 1/ex$price
+    xe2 <- xe
+    xe2$denominator <- xe$numerator
+    xe2$numerator <- xe$denominator
+    xe2$price <- 1/xe$price
 
-    ex <- rbind(ex, ex2)
+    xe <- rbind(xe, xe2)
 
-    ex$price <- round(ex$price, 4)
+    xe$price <- round(xe$price, 4)
 
-    o <- rev(order(ex$date))
-    ex <- ex[o,]
+    o <- rev(order(xe$date))
+    xe <- xe[o,]
 
-    drop <- which(duplicated(ex[,c("denominator", "numerator", "date")]))
-    if(length(drop)>0) ex <- ex[-drop,]
+    drop <- which(duplicated(xe[,c("denominator", "numerator", "date")]))
+    if(length(drop)>0) xe <- xe[-drop,]
 
-    return(ex)
+    return(xe)
 
   }
 

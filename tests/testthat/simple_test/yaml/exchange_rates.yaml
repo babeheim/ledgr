@@ -1,0 +1,1470 @@
+
+- date        : "2009-12-27"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "2009-12-27"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "121.5472"
+
+- date        : "2009-11-07"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "2009-11-07"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "127.9596"
+
+- date        : "2009-09-18"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0089"
+
+- date        : "2009-09-18"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "112.1695"
+
+- date        : "2009-07-30"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "2009-07-30"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "119.5016"
+
+- date        : "2009-06-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "2009-06-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.1468"
+
+- date        : "2009-04-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "2009-04-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "133.7281"
+
+- date        : "2009-03-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2009-03-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.6393"
+
+- date        : "2009-01-11"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "2009-01-11"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "130.7268"
+
+- date        : "2008-11-22"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0092"
+
+- date        : "2008-11-22"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "109.1586"
+
+- date        : "2008-10-03"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "2008-10-03"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "132.4851"
+
+- date        : "2008-08-14"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2008-08-14"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.2132"
+
+- date        : "2008-06-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "2008-06-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "135.061"
+
+- date        : "2008-05-06"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "2008-05-06"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "132.1324"
+
+- date        : "2008-03-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2008-03-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.4287"
+
+- date        : "2008-01-27"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0079"
+
+- date        : "2008-01-27"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "126.6092"
+
+- date        : "2007-12-08"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "2007-12-08"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.973"
+
+- date        : "2007-10-19"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "2007-10-19"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "135.9373"
+
+- date        : "2007-08-30"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.009"
+
+- date        : "2007-08-30"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "110.8616"
+
+- date        : "2007-07-11"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0086"
+
+- date        : "2007-07-11"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "116.746"
+
+- date        : "2007-05-22"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0088"
+
+- date        : "2007-05-22"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "113.0369"
+
+- date        : "2007-04-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0073"
+
+- date        : "2007-04-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "136.3084"
+
+- date        : "2007-02-11"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "2007-02-11"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "131.2439"
+
+- date        : "2006-12-23"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "2006-12-23"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "128.755"
+
+- date        : "2006-11-03"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0085"
+
+- date        : "2006-11-03"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "118.1931"
+
+- date        : "2006-09-14"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "2006-09-14"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "127.7466"
+
+- date        : "2006-07-26"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2006-07-26"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.3091"
+
+- date        : "2006-06-06"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "2006-06-06"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "141.3319"
+
+- date        : "2006-04-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0083"
+
+- date        : "2006-04-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "120.3624"
+
+- date        : "2006-02-26"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "2006-02-26"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "134.6328"
+
+- date        : "2006-01-07"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2006-01-07"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.4749"
+
+- date        : "2005-11-18"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "2005-11-18"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "121.6342"
+
+- date        : "2005-09-29"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "2005-09-29"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "138.3714"
+
+- date        : "2005-08-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "2005-08-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "131.5032"
+
+- date        : "2005-06-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "2005-06-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "132.7053"
+
+- date        : "2005-05-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.007"
+
+- date        : "2005-05-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "143.56"
+
+- date        : "2005-03-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "2005-03-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "131.0024"
+
+- date        : "2005-01-22"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "2005-01-22"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "127.4996"
+
+- date        : "2004-12-03"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "2004-12-03"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "123.606"
+
+- date        : "2004-10-14"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "2004-10-14"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "123.1619"
+
+- date        : "2004-08-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "2004-08-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "128.2712"
+
+- date        : "2004-07-06"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "2004-07-06"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "123.6467"
+
+- date        : "2004-05-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "2004-05-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "133.4317"
+
+- date        : "2004-03-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0085"
+
+- date        : "2004-03-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "117.7894"
+
+- date        : "2004-02-07"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0093"
+
+- date        : "2004-02-07"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "107.4839"
+
+- date        : "2003-12-19"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0068"
+
+- date        : "2003-12-19"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "148.0005"
+
+- date        : "2003-10-30"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "2003-10-30"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "128.8514"
+
+- date        : "2003-09-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0083"
+
+- date        : "2003-09-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "120.278"
+
+- date        : "2003-07-22"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0089"
+
+- date        : "2003-07-22"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "112.2772"
+
+- date        : "2003-06-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0087"
+
+- date        : "2003-06-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "115.4084"
+
+- date        : "2003-04-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0079"
+
+- date        : "2003-04-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "126.5745"
+
+- date        : "2003-02-22"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "2003-02-22"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.7692"
+
+- date        : "2003-01-03"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "2003-01-03"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "140.4365"
+
+- date        : "2002-11-14"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2002-11-14"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.1738"
+
+- date        : "2002-09-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0086"
+
+- date        : "2002-09-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "116.5321"
+
+- date        : "2002-08-06"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "2002-08-06"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "134.6463"
+
+- date        : "2002-06-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0067"
+
+- date        : "2002-06-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "148.862"
+
+- date        : "2002-04-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2002-04-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "130.468"
+
+- date        : "2002-03-09"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0079"
+
+- date        : "2002-03-09"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "126.8304"
+
+- date        : "2002-01-18"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2002-01-18"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "130.4652"
+
+- date        : "2001-11-29"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0088"
+
+- date        : "2001-11-29"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "113.8634"
+
+- date        : "2001-10-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "2001-10-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "132.7754"
+
+- date        : "2001-08-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "2001-08-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "133.415"
+
+- date        : "2001-07-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0073"
+
+- date        : "2001-07-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "136.747"
+
+- date        : "2001-05-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "2001-05-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.8405"
+
+- date        : "2001-03-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "2001-03-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.697"
+
+- date        : "2001-02-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "2001-02-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "119.338"
+
+- date        : "2000-12-14"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "2000-12-14"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "139.0617"
+
+- date        : "2000-10-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "2000-10-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "139.8216"
+
+- date        : "2000-09-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2000-09-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "130.6542"
+
+- date        : "2000-07-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0073"
+
+- date        : "2000-07-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "137.43"
+
+- date        : "2000-05-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "2000-05-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "130.1677"
+
+- date        : "2000-04-08"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "2000-04-08"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "135.0922"
+
+- date        : "2000-02-18"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0079"
+
+- date        : "2000-02-18"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "127.0285"
+
+- date        : "1999-12-30"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "1999-12-30"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "134.0041"
+
+- date        : "1999-11-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "1999-11-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "133.5801"
+
+- date        : "1999-09-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "1999-09-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.3873"
+
+- date        : "1999-08-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0089"
+
+- date        : "1999-08-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "112.4584"
+
+- date        : "1999-06-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "1999-06-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.8634"
+
+- date        : "1999-04-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0068"
+
+- date        : "1999-04-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "147.0822"
+
+- date        : "1999-03-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0083"
+
+- date        : "1999-03-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "120.1932"
+
+- date        : "1999-01-14"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "1999-01-14"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.206"
+
+- date        : "1998-11-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "1998-11-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "138.2753"
+
+- date        : "1998-10-06"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "1998-10-06"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "118.9871"
+
+- date        : "1998-08-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "1998-08-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "133.0815"
+
+- date        : "1998-06-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "1998-06-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "121.605"
+
+- date        : "1998-05-09"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "1998-05-09"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.3091"
+
+- date        : "1998-03-20"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "1998-03-20"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "135.3096"
+
+- date        : "1998-01-29"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0069"
+
+- date        : "1998-01-29"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "145.8343"
+
+- date        : "1997-12-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "1997-12-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.7007"
+
+- date        : "1997-10-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "1997-10-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "128.8285"
+
+- date        : "1997-09-01"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "1997-09-01"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "138.7904"
+
+- date        : "1997-07-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "1997-07-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "131.5309"
+
+- date        : "1997-05-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "1997-05-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "131.0112"
+
+- date        : "1997-04-04"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0074"
+
+- date        : "1997-04-04"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "134.6879"
+
+- date        : "1997-02-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "1997-02-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "140.2751"
+
+- date        : "1996-12-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "1996-12-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "132.1825"
+
+- date        : "1996-11-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "1996-11-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "123.1257"
+
+- date        : "1996-09-16"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "1996-09-16"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "124.8583"
+
+- date        : "1996-07-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "1996-07-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "119.1558"
+
+- date        : "1996-06-08"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0073"
+
+- date        : "1996-06-08"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "137.2352"
+
+- date        : "1996-04-19"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0069"
+
+- date        : "1996-04-19"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "144.9526"
+
+- date        : "1996-02-29"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "1996-02-29"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.4433"
+
+- date        : "1996-01-10"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "1996-01-10"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "123.0027"
+
+- date        : "1995-11-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0083"
+
+- date        : "1995-11-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "120.2905"
+
+- date        : "1995-10-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "1995-10-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "124.7802"
+
+- date        : "1995-08-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0069"
+
+- date        : "1995-08-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "145.4017"
+
+- date        : "1995-06-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "1995-06-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "134.169"
+
+- date        : "1995-05-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "1995-05-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.534"
+
+- date        : "1995-03-16"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "1995-03-16"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "119.0474"
+
+- date        : "1995-01-25"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0088"
+
+- date        : "1995-01-25"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "113.0645"
+
+- date        : "1994-12-06"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0081"
+
+- date        : "1994-12-06"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "123.7952"
+
+- date        : "1994-10-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.007"
+
+- date        : "1994-10-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "143.3139"
+
+- date        : "1994-08-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "1994-08-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "122.5101"
+
+- date        : "1994-07-09"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0069"
+
+- date        : "1994-07-09"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "144.6919"
+
+- date        : "1994-05-20"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "1994-05-20"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "138.9235"
+
+- date        : "1994-03-31"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.007"
+
+- date        : "1994-03-31"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "142.9507"
+
+- date        : "1994-02-09"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0085"
+
+- date        : "1994-02-09"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "117.2799"
+
+- date        : "1993-12-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "1993-12-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.0204"
+
+- date        : "1993-11-01"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0072"
+
+- date        : "1993-11-01"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "139.4086"
+
+- date        : "1993-09-12"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0085"
+
+- date        : "1993-09-12"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "118.1289"
+
+- date        : "1993-07-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0086"
+
+- date        : "1993-07-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "115.7192"
+
+- date        : "1993-06-04"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "1993-06-04"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "140.345"
+
+- date        : "1993-04-15"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "1993-04-15"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "132.299"
+
+- date        : "1993-02-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "1993-02-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "140.4441"
+
+- date        : "1993-01-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "1993-01-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.5034"
+
+- date        : "1992-11-16"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "1992-11-16"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.9537"
+
+- date        : "1992-09-27"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.007"
+
+- date        : "1992-09-27"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "143.4501"
+
+- date        : "1992-08-08"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "1992-08-08"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "118.8587"
+
+- date        : "1992-06-19"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0073"
+
+- date        : "1992-06-19"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "136.4938"
+
+- date        : "1992-04-30"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.008"
+
+- date        : "1992-04-30"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.3777"
+
+- date        : "1992-03-11"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0068"
+
+- date        : "1992-03-11"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "147.5856"
+
+- date        : "1992-01-21"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.01"
+
+- date        : "1992-01-21"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "100.1993"
+
+- date        : "1991-12-02"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "1991-12-02"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "140.1092"
+
+- date        : "1991-10-13"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0076"
+
+- date        : "1991-10-13"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "131.5692"
+
+- date        : "1991-08-24"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "1991-08-24"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "128.8091"
+
+- date        : "1991-07-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "1991-07-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "141.1604"
+
+- date        : "1991-05-16"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0071"
+
+- date        : "1991-05-16"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "139.9663"
+
+- date        : "1991-03-27"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0087"
+
+- date        : "1991-03-27"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "114.7451"
+
+- date        : "1991-02-05"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "1991-02-05"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.9876"
+
+- date        : "1990-12-17"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0077"
+
+- date        : "1990-12-17"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "129.5734"
+
+- date        : "1990-10-28"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0078"
+
+- date        : "1990-10-28"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "127.8776"
+
+- date        : "1990-09-08"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0075"
+
+- date        : "1990-09-08"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "134.0868"
+
+- date        : "1990-07-20"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0082"
+
+- date        : "1990-07-20"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "121.8966"
+
+- date        : "1990-05-31"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0088"
+
+- date        : "1990-05-31"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "113.8064"
+
+- date        : "1990-04-11"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0079"
+
+- date        : "1990-04-11"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "125.8186"
+
+- date        : "1990-02-20"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0084"
+
+- date        : "1990-02-20"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "119.6379"
+
+- date        : "1990-01-01"
+  numerator   : "eur"
+  denominator  : "usd"
+  price       : "0.0083"
+
+- date        : "1990-01-01"
+  numerator   : "usd"
+  denominator  : "eur"
+  price       : "120.6175"

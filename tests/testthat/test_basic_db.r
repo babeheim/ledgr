@@ -6,9 +6,7 @@
 dir_init('./simple_test')
 setwd('./simple_test')
 
-wb <- ledgr::init_workbook()
-
-library(testthat)
+wb <- init_workbook()
 
 # make some dummy accounts
 date_shifts <- data.frame(tid=character(), 
@@ -56,21 +54,14 @@ wb$dates <- date_shifts
 
 
 # add some currency conversion
-
-exchange_rates <- data.frame(date=character(), 
-  denominator=character(), numerator=character(), price=character())
-
-ex_dates <- c("1999-01-01", "2000-01-01", "2001-01-01")
-denom <- c("eur", "eur", "eur")
-num <- c("usd", "usd", "usd")
-price <- c("110", "130", "150")
-
-ex <- data.frame(date=ex_dates, denominator=denom, numerator=num, price=price)
-
-wb$exchange <- ex
-
-
-dir_init('./csv')
+my_dates <- as.character(as.Date(seq(7305, 14610, by = 50), origin = "1970-01-01"))
+exchange_rates <- data.frame(
+  date=my_dates,
+  denominator="eur",
+  numerator="usd",
+  price=rnorm(length(my_dates), 130, 10)
+)
+wb$exchange <- exchange_rates
 
 save_workbook(wb)
 
@@ -184,27 +175,9 @@ test_that("shift_dates works", {
 
 
 
-test_that("exchange rates fail if not formatted", {
-
-  d <- wb$ledger
-  xe <- wb$exchange
-
-  expect_error(exchange(d, xe, "eur"))
-  # needs more testing....
-
-  d <- wb$ledger
-  xe <- wb$exchange
-
-  expect_true( length(unique(d$currency))==2 )
-  # needs more testing....
-
-})
-
-
-ex <- ledgr::format_exchange_rates(ex)
-
-test_that("exchange rates go both directions", {
-  expect_true(all(table(ex$date)==2))
+test_that("exchange rates go both directions once formatted", {
+  xe <- format_exchange_rates(wb$exchange)
+  expect_true(all(table(xe$date)==2))
 })
 
 
@@ -212,7 +185,7 @@ test_that("exchange rates go both directions", {
 test_that("exchange rates work once formatted", {
 
   d <- wb$ledger
-  xe <- ledgr::format_exchange_rates(wb$exchange)
+  xe <- format_exchange_rates(wb$exchange)
 
   d <- exchange(d, xe, "eur") 
   # needs more testing....
@@ -220,7 +193,7 @@ test_that("exchange rates work once formatted", {
   expect_true( length(unique(d$currency))==2 )
 
   d <- wb$ledger
-  xe <- ledgr::format_exchange_rates(wb$exchange)
+  xe <- format_exchange_rates(wb$exchange)
 
   d <- exchange(d, xe, "usd") 
   # needs more testing....
@@ -229,7 +202,7 @@ test_that("exchange rates work once formatted", {
 
 })
 
-wb$exchange <- ledgr::format_exchange_rates(ex)
+wb$exchange <- format_exchange_rates(wb$exchange)
 
 
 
@@ -252,7 +225,7 @@ test_that("test entries are absorbed", {
     }
   }
 
-  test <- ledgr::absorb_entries(wb, add)
+  test <- absorb_entries(wb, add)
   expect_true(all(c("test_one", "test_two", "test_three") %in% test$tid))
 
 })
@@ -263,13 +236,12 @@ test_that("test entries are absorbed", {
 
 
 test_that("accounts balance", {
-  wb$accounts <- ledgr::summarize_accounts(wb) 
-  test <- ledgr::balance_accounts(wb)
+  wb$accounts <- summarize_accounts(wb) 
+  test <- balance_accounts(wb)
   expect_true(abs(sum(test$amount)) < 10)
 })
 
 
-ledgr::audit_accounts(wb)
 
 
 
@@ -282,10 +254,12 @@ ledgr::audit_accounts(wb)
 # good design IMO b/c wont make a random file with bad account name
 
 
-wb$accounts <- ledgr::summarize_accounts(wb) 
-wb$journal <- ledgr::prepare_journal(wb)
+wb$accounts <- summarize_accounts(wb) 
+wb$journal <- prepare_journal(wb)
 
-ledgr::prepare_reports(wb)
+save_workbook(wb, format = "csv")
+save_workbook(wb, format = "yaml")
+prepare_reports(wb)
 
 # add a 'depth' flag so you can reduce subaccounts easily
 

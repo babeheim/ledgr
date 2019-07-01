@@ -1,0 +1,9 @@
+"account","n_postings","start_date","last_date","net_flow","currency","n_checksums"
+"assets:deutsche_bank",14,"1996-07-14","2003-06-19",-0.62,"eur",0
+"assets:paypal",40,"1996-01-18","2004-11-15",-29.57,"eur",0
+"expenses:food:groceries",13,"1994-11-08","2003-10-19",1.37,"eur",0
+"expenses:food:restaurant",6,"1995-11-08","2003-03-19",7.96,"eur",0
+"expenses:rent",20,"1996-01-18","2004-04-15",-13.35,"eur",0
+"income:mpi:grants",41,"1995-10-16","2005-07-18",-6.83,"eur",0
+"income:mpi:salary",20,"1996-04-15","2004-11-15",0.42,"eur",0
+"liabilities:chase_freedom_cc",46,"1994-11-08","2005-07-18",19.75,"eur",0

@@ -8,7 +8,7 @@ rm(list=ls())
 dir_init('./currency_tests')
 setwd('./currency_tests')
 
-wb <- ledgr::init_workbook()
+wb <- init_workbook()
 
 library(testthat)
 
@@ -53,19 +53,14 @@ wb$dates <- date_shifts
 
 
 # add some currency conversion
-
-exchange_rates <- data.frame(date=character(), 
-  denominator=character(), numerator=character(), price=character())
-
-ex_dates <- c("1999-01-01", "2000-01-01", "2001-01-01")
-denom <- c("eur", "eur", "eur")
-num <- c("yen", "yen", "yen")
-price <- c("110", "130", "150")
-
-ex <- data.frame(date=ex_dates, denominator=denom, numerator=num, price=price)
-
-wb$exchange <- ex
-
+my_dates <- as.character(as.Date(seq(7305, 14610, by = 50), origin = "1970-01-01"))
+exchange_rates <- data.frame(
+  date=my_dates,
+  denominator="eur",
+  numerator="usd",
+  price=rnorm(length(my_dates), 130, 10)
+)
+wb$exchange <- exchange_rates
 
 #####
 
@@ -165,12 +160,12 @@ if(length(inputs)>0){
 
 test_that("test entries are absorbed", {
 
-  test <- ledgr::absorb_entries(wb, add)
+  test <- absorb_entries(wb, add)
   expect_true(all(c("test_one", "test_two", "test_three") %in% test$tid))
 
 })
 
-wb$ledger <- ledgr::absorb_entries(wb, add)
+wb$ledger <- absorb_entries(wb, add)
 
 
 # unit test: try to exchange currencies that have no pairings
@@ -194,7 +189,7 @@ test_that("exchange rates fail if not formatted", {
 })
 
 
-wb$exchange <- ledgr::format_exchange_rates(wb$exchange)
+wb$exchange <- format_exchange_rates(wb$exchange)
 
 test_that("exchange rates go both directions", {
   ex <- wb$exchange
@@ -238,10 +233,13 @@ test_that("accounts balance", {
   expect_true(abs(sum(d$amount)) < 100) # lame
 })
 
-wb$accounts <- ledgr::summarize_accounts(wb) 
-wb$journal <- ledgr::prepare_journal(wb)
+wb$accounts <- summarize_accounts(wb) 
+wb$journal <- prepare_journal(wb)
 
-ledgr::prepare_reports(wb)
+save_workbook(wb, format = "yaml")
+save_workbook(wb, format = "csv")
+
+prepare_reports(wb)
 
 
 setwd('..')

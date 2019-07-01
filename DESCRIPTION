@@ -4,7 +4,8 @@ Version: 0.0.0.9000
 Authors@R: person("Bret", "Beheim", email = "beheim@gmail.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.3.2),
-  openxlsx
+  openxlsx,
+  dplyr
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
