@@ -291,8 +291,8 @@ absorb_entries <- function (wb, add) {
         d <- rbind(d, add[keep, ])
         o <- order(d$date)
         d <- d[o, ]
-        return(d)
     }
+    return(d)
 }
 
 
@@ -395,6 +395,7 @@ summarize_accounts <- function (wb, currency = "eur")
 {
     d <- wb$ledger
     xe <- wb$exchange
+
     d <- exchange(d, xe, currency)
 
     d$date <- fix_dates(d$date)
